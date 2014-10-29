@@ -30,6 +30,7 @@ Python
 	$>sudo pip install ipython // better interactive interpreter
 	$>sudo pip install numpy   // numerical python
 	$>sudo pip install scipy   // scientific python
+	$>sudo pip install matplotlib // for plotting purposes
 	
 * If scipy does not seem to install lets debug it on friday
 

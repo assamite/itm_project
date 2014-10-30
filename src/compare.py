@@ -6,7 +6,13 @@ import sys
 def compare(folders):
     """Compare file sizes in different folders. 
     
-    Assumes that first folder represents original data.
+    Assumes that files in first folder represents original (non-compressed) data,
+    and other folders contain compressed data files with names matching to 
+    original data files appended by additional compression file suffix.
+    
+    That is, if original folder contains file name 'data.dat', other folders
+    contains file names of the form  'data.dat.foo' but not 'data.dat.foo.bar'.
+    Suffix can vary from folder to folder.
     
     May break if folders don't have any common files or there are files with
     zero length.
@@ -18,21 +24,16 @@ def compare(folders):
     file_lists = [[f if ld == list_dirs[0] else f.rsplit(".", 1)[0] for f in ld if f[0] != '.'] for ld in list_dirs]
     
     # Get a set of common file names in all folders. 
-    common_files = set(file_lists[0]) # Start with data folder
+    common_files = set(file_lists[0])
     map(lambda d: common_files.intersection(d), file_lists[:1])
-    #for f in file_lists[1:]:
-    #    common_files = common_files & set(f) # and take 
-        
-    print common_files
+  
     # Sort the names for pretty print
     common_files = sorted(list(common_files))
     # Some pretty print calculations
     max_file_name = max([len(c) for c in common_files] + [len('Totals:')])
     max_folder_name = max([len(f) for f in folders] + [20])
-    max_first = max([max_file_name, len("Original")])
     mfn = str(max_folder_name)
     
-    output = ""
     # Construct first line for output with folder names
     headline = ("{:<" + str(max_file_name) + "} ").format('File')
     for f in folders:
@@ -40,7 +41,7 @@ def compare(folders):
         
     output = headline + "\n"
         
-    sums = [0 for l in folders]
+    sums = [0 for i in xrange(len(folders))]
     # For every common file presented in the folders, get file size and size 
     # percentages of the original data for all folders.
     for c in common_files:

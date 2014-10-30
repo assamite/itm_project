@@ -15,6 +15,9 @@ Project structure::
 	examples/
 		some Python code examples
 
+	test/
+		put your compression test files in here
+
 
 Python
 ------

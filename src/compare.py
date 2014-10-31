@@ -2,6 +2,7 @@
 '''
 import os
 import sys
+import inspect
 
 def compare(folders):
     """Compare file sizes in different folders. 
@@ -11,7 +12,7 @@ def compare(folders):
     original data files appended by additional compression file suffix.
     
     That is, if original folder contains file name 'data.dat', other folders
-    contains file names of the form  'data.dat.foo' but not 'data.dat.foo.bar'.
+    contain file names of the form  'data.dat.foo' but not 'data.dat.foo.bar'.
     Suffix can vary from folder to folder.
     
     May break if folders don't have any common files or there are files with
@@ -19,7 +20,7 @@ def compare(folders):
     """
     abspaths = [os.path.abspath(f) for f in folders]
     list_dirs = [os.listdir(fol) for fol in abspaths]
-    # Files in all the folders, excluding files starting with dots. Not very readable..
+    # Files in all the folders, excluding files starting with dots.
     # For compressed folders, the names are cut before last dot.
     file_lists = [[f if ld == list_dirs[0] else f.rsplit(".", 1)[0] for f in ld if f[0] != '.'] for ld in list_dirs]
     
@@ -77,7 +78,10 @@ def compare(folders):
 
 
 if __name__ == "__main__":
-    usage_text = "Usage: python " + __name__ + " data_folder compress_folder1 compress_folder2 ..."
+    usage_text = "\n"
+    usage_text += "Usage: python " + __file__ + " data_folder compress_folder1 compress_folder2 ..."
+    usage_text += "\n\n"
+    usage_text += compare.__doc__
 
     if len(sys.argv) < 3:
         print usage_text

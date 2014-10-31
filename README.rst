@@ -17,6 +17,9 @@ Project structure::
 
 	test/
 		put your compression test files in here
+	
+	gzip_test/
+		gzip compressed files are here for comparing purposes
 
 
 Python

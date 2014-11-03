@@ -35,5 +35,9 @@ plt.show()
 
 # Counting and saving the differences between the fitted model and actual data
 difference = data - np.round(fun(ran,*popt))
+rss = 0
+for i in range(len(difference)):
+	rss += difference[i]**2
+print("Residual sum of squares: ",rss)
 np.savetxt("diff.dat",difference,"%3d")	
 

@@ -3,11 +3,11 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 
 # Read the original data from file
-data = file("curve1.dat","r").read().split("\n")
+data = open("../data/curve1.dat","r").read().split("\n")
 data.pop()
 data = [int(x) for x in data]
 
-# Remove the anomaly in data points data[63] so it doesn't affect optimization
+# Remove the anomaly in data points, data[63]=500, so it doesn't affect optimization
 data63 = data[63]
 data[63] = (data[62]+data[64])/2
 

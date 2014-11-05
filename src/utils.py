@@ -37,6 +37,14 @@ def str2encode(s):
     return reduce(lambda x,y: x+enc[y], s, ""), enc
     
     
+def dig2enc(iterable):
+    '''Get Huffman encoding of the given iterable of integers and the encoded
+    binary string. TEST version.'''
+    digits = reduce(lambda x,y: x+(str(y) if y < 0 else "+"+str(y)), iterable, "").strip()
+    counts = count_chars(digits)
+    enc = _encode2dict(encode(counts))
+    return reduce(lambda x,y: x+enc[y], digits, ""), enc, digits
+    
 def _encode2dict(enc):
     d ={}
     for e in enc:

@@ -16,4 +16,4 @@ for i in xrange(0, len(bitstring), 8):
     bytes.append(by)
    
 #Write all unsigned integers into a file 
-open('test','w').write(pack('275B',*bytes))
+open('test','w').write(pack('{}B'.format(len(bytes)),*bytes))

@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
+import utils
 
 # Read the original data from file
 data = open("../data/curve1.dat","r").read().split("\n")
@@ -19,8 +20,8 @@ data=[data[x] for x in range(1000)]
 def fun(x, a, b, c, d, e, f):
         val = np.array([(a-b*xi)*(np.abs(np.cos(c*xi + d))-1)**2+e for xi in x])
 #        for i in range(len(x)):
-#                if val[i] > f:
-#                        val[i] = f
+#                if val[i] > 0:
+#                        val[i] = 0
         return val
 
 # Function with a rough approximation of the optimized parameters
@@ -39,8 +40,18 @@ ran2 = np.linspace(0,1999,num=2000)
 #y=funopt(ran2)
 y=fun(ran2,*popt)
 #data[63]=data63 # Just adding the anomaly in data back
-plt.plot(data_all)
-plt.plot(y);
+
+y2 = fun(ran, *popt)
+res = y2 - data
+plt.plot(data[:200])
+#plt.plot(res[:100]);
+plt.plot(y2[:200])
 plt.show()
 
-
+#cut res to 2 decimal precision
+resc = [float("{:.2f}".format(e)) for e in res]
+hf, enc, digits = utils.dig2enc(resc)
+enc, bts, add = utils.nums2bin(resc, filepath='test')
+nums = utils.bin2nums('test', enc, len(bts), add)
+print nums == resc
+print "Huffman code bits {}, bytes {}".format(len(hf), np.ceil(float(len(hf)) / 8))

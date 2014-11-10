@@ -40,3 +40,8 @@ plt.plot(y);
 #plt.plot(data-y)
 plt.show()
 np.savetxt("optimal_params_all",popt,"%f")
+
+estimates = fun(ran, *quessed_params)
+estimates = [round(x,2) for x in estimates]
+residuals = np.array(data)-np.array(estimates)
+np.savetxt("d",residuals,"%.2f")

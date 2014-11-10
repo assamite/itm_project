@@ -12,7 +12,7 @@ def fun(x, a, b, c, d, e, f, g, h, i, j, k):
 	val = [0 for n in range(len(x))]
 	for n in range(len(x)):
 		if(n<1250):
-			val[n] = (abs(a*x[n] + b)) *(-1)* (np.abs(np.cos(c*x[n]))-1)**2+d
+			val[n] = (np.abs(a*x[n] + b)) *(-1)* (np.abs(np.cos(c*x[n]))-1)**2+d
         	else:
 			val[n] = (e*(x[n]-1250) + f) * ( np.abs( np.cos(g*(x[n]-1250) + h) + i ) +j ) + k	
 	return np.array(val)
@@ -44,4 +44,4 @@ np.savetxt("optimal_params_all",popt,"%f")
 estimates = fun(ran, *quessed_params)
 estimates = [round(x,2) for x in estimates]
 residuals = np.array(data)-np.array(estimates)
-np.savetxt("d",residuals,"%.2f")
+np.savetxt("r",residuals,"%.2f")

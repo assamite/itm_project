@@ -58,7 +58,7 @@ def nums2bin(iterable, filepath=None):
     '''
     huff, enc, digits = dig2enc(iterable)
     add =  8 - (len(huff) % 8) if len(huff) % 8 != 8 else 0
-    if add != 0:
+    if add != 0 and add != 8:
         for i in xrange(add): huff += '0'
         
     bts = []  

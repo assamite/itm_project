@@ -18,7 +18,7 @@ data=[data[x] for x in range(1000)]
 
 # The general model class used for optimization
 def fun(x, a, b, c, d, e, f):
-        val = np.array([(a-b*xi)*(np.abs(np.cos(c*xi + d))-1)**2+e for xi in x])
+        val = np.array([(a-b*xi)*(np.cos(c*xi*2+d)+np.abs(np.cos(c*xi + d))-2)**4+e for xi in x])
 #        for i in range(len(x)):
 #                if val[i] > 0:
 #                        val[i] = 0
@@ -44,7 +44,7 @@ y=fun(ran2,*popt)
 y2 = fun(ran, *popt)
 res = y2 - data
 plt.plot(data[:200])
-#plt.plot(res[:100]);
+plt.plot(res[:200]);
 plt.plot(y2[:200])
 plt.show()
 
@@ -52,6 +52,7 @@ plt.show()
 resc = [float("{:.2f}".format(e)) for e in res]
 hf, enc, digits = utils.dig2enc(resc)
 enc, bts, add = utils.nums2bin(resc, filepath='test')
+print enc, len(bts), add
 nums = utils.bin2nums('test', enc, len(bts), add)
 print nums == resc
 print "Huffman code bits {}, bytes {}".format(len(hf), np.ceil(float(len(hf)) / 8))

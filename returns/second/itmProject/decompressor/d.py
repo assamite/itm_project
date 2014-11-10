@@ -1,7 +1,7 @@
 import struct,numpy,re,sys
 c='.1032547698'
 e=['00','011','1000','1111','010','1001','1100','1010','1011','1110','1101']
-bts=reduce(lambda x,y:x+'{:08b}'.format(y),struct.unpack('4881B',open('test','r').read()),"")[:-3]
+bts=reduce(lambda x,y:x+'{:08b}'.format(y),struct.unpack('4881B',open(sys.argv[1]).read()),"")[:-3]
 b=bts[:2000]
 h=bts[2000:]
 s=""

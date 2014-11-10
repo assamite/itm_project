@@ -28,4 +28,4 @@ plt.plot(data_all)
 plt.plot(y);
 plt.plot(data_all-y)
 plt.show()
-np.savetxt("data/optimal_params",popt,"%f")
+np.savetxt("optimal_params",popt,"%f")

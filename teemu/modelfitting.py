@@ -7,46 +7,25 @@ data = open("../data/curve1.dat","r").read().split("\n")
 data.pop()
 data = [float(x) for x in data]
 
-# Remove the anomaly in data points, data[63]=500, so it doesn't affect optimization
-#data63 = data[63]
-#data[63] = (data[62]+data[64])/2
-
-# Only optimize this type of model wrt data points 0...99
+# At this point, I optimize only wrt the first 1000 datapoints
+data_all=data
 data=[data[x] for x in range(1000)]
 
 # The general model class used for optimization
-def fun(x, a, b, c, d, e, f):
-	val = np.array([(a-b*xi)*(np.abs(np.cos(c*xi + d))-1)+e for xi in x])
-	for i in range(len(x)):
-		if val[i] > f:
-			val[i] = f
-	return val
-
-# Function with a rough approximation of the optimized parameters
-#def funopt(x):
-#        val = np.array([(1698-10.79*xi)*(np.abs(np.cos((xi + 1)/6))-1)+484 for xi in x])
-#        for i in range(len(x)):
-#                if val[i] > 34:
-#                        val[i] = 34
-#        return np.round(val)
+def fun(x, a, b, c, d):
+# 	val = np.array[-np.abs((a+bxi)*(np.cos(c*xi+d))-1)**2]     
+	val = np.array([ (abs(b*((-xi)/a + 1))) *(-1)* (np.abs(np.cos(c*xi))-1)**2+d for xi in x])
+        return val
 
 # Optimization using scipy.opitmize.curve_fit
 ran = np.linspace(0,999,num=1000)
-popt, popcov = curve_fit(fun, ran, data, p0 = [1700, 12, 1.0/60, 0, 500, 50])
+popt, popcov = curve_fit(fun, ran, data, p0 = [1200, 1300, 1.0/60, 500])
+ran2 = np.linspace(0,1999,num=2000)
 
-# Plot data and fitted function
-#y=funopt(ran)
-y=fun(ran,*popt)
-#data[63]=data63 # Just adding the anomaly in data back
-plt.plot(data)
+# Plot data, the fitted function and the difference
+y=fun(ran2,*popt)
+plt.plot(data_all)
 plt.plot(y);
+plt.plot(data_all-y)
 plt.show()
-
-# Counting and saving the differences between the fitted model and actual data
-difference = data - y
-rss = 0
-for i in range(len(difference)):
-	rss += difference[i]**2
-print("Residual sum of squares: ",rss)
-np.savetxt("d",difference,"%d")	
-
+np.savetxt("data/optimal_params",popt,"%f")

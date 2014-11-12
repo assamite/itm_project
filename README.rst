@@ -2,6 +2,7 @@ Project for Information-Theoretic Modeling!
 ===========================================
 
 Data file ID's::
+
 	1		curve1.dat
 	2		paleo.csv
 

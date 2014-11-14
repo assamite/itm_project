@@ -14,7 +14,7 @@ def fun(x, a, b, c, d, e, f, g, h, i, j, k):
 	for n in range(len(x)):
 		if(n<1250):
 			val[n] = (np.abs(a*x[n] + b)) *(-1)* (np.abs(np.cos(c*x[n]))-1)**2+d
-        	else:
+		else:
 			val[n] = (e*(x[n]-1250) + f) * ( np.abs( np.cos(g*(x[n]-1250) + h) + i ) +j ) + k	
 	return np.array(val)
 

@@ -34,14 +34,16 @@ quessed_params = [-1.08, 1363, 1.0/60, 15, 1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2
 popt, popcov = curve_fit(fun, ran, data, p0 = quessed_params)
 
 # Plot data, the fitted function and the difference
-y=fun(ran,*popt)
-plt.plot(data)
-plt.plot(y);
+#y=fun(ran,*popt)
+#plt.plot(data)
+#plt.plot(y);
 #plt.plot(data-y)
-plt.show()
-np.savetxt("optimal_params_all",popt,"%f")
+#plt.show()
+#np.savetxt("optimal_params_all",popt,"%f")
 
 estimates = fun(ran, *quessed_params)
+for e in estimates:
+	print e
 estimates = [round(x,2) for x in estimates]
 residuals = np.array(data)-np.array(estimates)
-np.savetxt("r",residuals,"%.2f")
+#np.savetxt("r",residuals,"%.2f")

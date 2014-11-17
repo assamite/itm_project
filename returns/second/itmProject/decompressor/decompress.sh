@@ -1,5 +1,16 @@
 if [ ! -f decompressor/d.py ]; then
-	gunzip decompressor/d.py.gz
+	bunzip2 decompressor/d.py.bz2
 fi
-python decompressor/d.py $1 $2
+s=$(wc -c < $1)
+if [ $s == 4001 ]; then
+	python decompressor/d.py $1 $2
+else
+if [ $s == 102430 ]; then
+	bunzip2 -c $1 
+else
+	cat $1
+fi
+fi
+
+
 

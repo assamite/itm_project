@@ -1,6 +1,6 @@
 '''Compressor for all the files
 '''
-import struct, utils,sys
+import struct,utils,sys,gzip
 import numpy as np
 
 ids = {

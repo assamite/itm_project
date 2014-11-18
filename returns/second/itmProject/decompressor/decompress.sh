@@ -2,7 +2,7 @@ if [ ! -f decompressor/d.py ]; then
 	bunzip2 decompressor/d.py.bz2
 fi
 s=$(wc -c < $1)
-if [ $s == 4001 ]; then
+if [ $s == 4000 ]; then
 	python decompressor/d.py $1 $2
 else
 if [ $s == 102430 ]; then

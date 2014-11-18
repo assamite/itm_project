@@ -48,7 +48,7 @@ if sys.argv[1][-len('curve1.dat'):] == 'curve1.dat':
     #print len(residuals_int_bits) / 8
     #print len(residuals_dec_bits) / 8
 
-    s = "{:08b}".format(ids['curve1.dat']) + signs + residuals_int_bits + residuals_dec_bits
+    s = signs + residuals_int_bits + residuals_dec_bits
     #print len(s)
     if len(s) % 8 != 8 and len(s) % 8 != 0:
         #print len(s) % 8

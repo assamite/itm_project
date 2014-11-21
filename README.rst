@@ -5,7 +5,8 @@ Data file ID's::
 
 	1		curve1.dat
 	2		paleo.csv
-
+        3		ty.txt
+        4		group.stock.dat
 
 
 Project structure::

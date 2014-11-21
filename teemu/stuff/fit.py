@@ -46,4 +46,4 @@ for e in estimates:
 	print e
 estimates = [round(x,2) for x in estimates]
 residuals = np.array(data)-np.array(estimates)
-#np.savetxt("r",residuals,"%.2f")
+np.savetxt("r",residuals,'%s')

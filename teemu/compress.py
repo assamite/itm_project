@@ -12,9 +12,9 @@ data=[x.replace(",",".") for x in data]
 # Create array "accuracy". accuracy[i,j] = places after decimal points for data record i, field 10+j
 accuracy = []
 for i in range(len(data)):
-    row=[0,0,0]
+    row=[0,0,0,0]
     record = data[i].split(";")
-    for indx in range(0,3):
+    for indx in range(0,4):
         if record[10+indx]=='':
             row[indx]=-1
         elif record[10+indx]=='#DIV/0!':
@@ -44,7 +44,15 @@ for i in range(len(data)):
         if record[11]!=0 and row[1]>=0:
             row[1]=record[11]
     elif record[11] != round(record[4]/record[5], row[1]) and row[1] >=0:
-        row[1]=+record[11]
+  #      row[1]=+record[11] WHATWHATWHAT ilmeisesti typo, vaikka on toiminut
+        row[1]=record[11]
+
+    # WER!
+    if(record[3]-record[7]==0) and row[3]>=0:
+        row[3]=record[13]
+    elif row[3]>=0 and record[13] != round((record[3]/(record[3]-record[7]))**2,row[3]):
+        row[3]=record[13]
+
     row = [str(x) for x in row]
     accuracy.append(row)
 np.savetxt("a",accuracy,'%s')
@@ -83,7 +91,7 @@ for i in range(len(data)):
     newrecord=''
     record = data[i].split(";")
     for j in range(len(record)):
-        if j!= 2 and j!=8 and j!=9 and j!=10 and j!=11 and j!=12:
+        if j!= 2 and j!=8 and j!=9 and j!=10 and j!=11 and j!=12 and j!=13:
             newrecord += (record[j]+';')
         elif j==2:
             newrecord += (str(maxdm1[i])+';')
@@ -95,8 +103,10 @@ for i in range(len(data)):
             newrecord += (str(accuracy[i][0])+';')
         elif j==11:
             newrecord += (str(accuracy[i][1])+';')
-        else:
+        elif j==12:
             newrecord += (str(accuracy[i][2])+';')
+        else:
+            newrecord += (str(accuracy[i][3])+';')
     newdata.append(newrecord)
 print(newdata)
 np.savetxt("c",newdata,'%s')

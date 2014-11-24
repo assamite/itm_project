@@ -5,7 +5,7 @@ d=open("c","r").read().split("\n")[:-1]
 o=[]
 o.append(d[0])
 del d[0]
-b=0
+z='0'
 for i in range(len(d)):
     r=d[i].split(";")
     l=''
@@ -18,10 +18,10 @@ for i in range(len(d)):
                 if r[2]!='':l+=g(2)
             else:l+=a
         elif j==8:
-            if a=='a':l+=b
+            if a=='a':l+=z
             else:
                 l+=a
-                b=a
+                z=a
         elif j in range(10,13):
             if a=='-2':
                 l+='#DIV/0!'
@@ -34,6 +34,23 @@ for i in range(len(d)):
                     v=round(v,b)
                     if b==0:l+=str(int(v))
                     else: l+=str(v)
+                except:
+                    l+=a
+        elif j==13:
+            if a=='-2':
+                l+='#DIV/0!'
+            elif i==636:l+='3'
+            elif i==1321:l+='2'
+            elif i==1793:l+='2'
+            elif i==2941:l+='1'
+            elif i==3415:l+='1'
+            elif a!='-1':
+                try:
+                    b=int(a)
+                    v=round((float(r[3])/(float(r[3])-float(r[7])))**2,b)
+                    if b==0:
+                        v=int(v)
+                    l+=str(v)
                 except:
                     l+=a
         else: l+=a

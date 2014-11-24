@@ -78,15 +78,15 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
 
     signs = reduce(lambda x,y: x+('0' if y<=0 else '1'), residuals, "")
     residuals_abs = [np.abs(r) for r in residuals]
-    residuals_int = np.array([int(r) for r in residuals_abs])
+    residuals_int = [int(r) for r in residuals_abs]
     residuals_dec = np.array([str(round(r - int(r),2)).split(".")[1] for r in residuals_abs])
-    residuals_dec = np.array([r +"0" if len(r)==1 else r for r in residuals_dec])
-    #print residuals_dec
+    residuals_dec = [r +"0" if len(r)==1 else r for r in residuals_dec]
     residuals_int_set = set(residuals_int)
     residuals_int_sorted = sorted(list(residuals_int_set))
+    
     residual_mappings = range(256)
     residual_mappings[210:216] = [347,5578,6625,7898,8650,9622]
-        
+       
     anomalies = [1323,1777,1827,4337,6250,6251,6252,9563]
     # Uhh, where do these come from?
     residuals_int[1323] = 82
@@ -95,25 +95,31 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     residuals_int[4337] = 33
     residuals_int[9563] = 134
     
-    #for i in anomalies:
-    #    print residuals_abs[i], residuals_int[i], residuals_dec[i], residuals[i]
-
-    res_bits = np.ceil(np.log2(len(residuals_int_set)))
-    residuals_int_bits = reduce(lambda x,y:x+("{:0"+str(int(res_bits))+"b}").format(residual_mappings.index(y)), residuals_int, "")
-    residuals_dec_bits = reduce(lambda x,y:x+"{:07b}".format(int(y)),residuals_dec, "")
-    s = "{0:08b}".format(ids['ty.txt']) + signs + residuals_int_bits + residuals_dec_bits
+    residuals_int_mapped = map(lambda x: residual_mappings.index(x), residuals_int)
+    residuals_dec_mapped = map(lambda x: residual_mappings.index(int(x)), residuals_dec)
+    residuals_all = residuals_int_mapped + residuals_dec_mapped
+    #print len(residuals_all)
+    
+    enc, a1, s, a2 = utils.ints2hfbin(residuals_all)
+    #print a1, a2
+    #print len(s), len(s) / 8.0
+    #print len(s) / 8.0, len(signs) / 8.0
+    s = "{0:08b}".format(ids['ty.txt']) + signs + enc + s
     if len(s) % 8 != 8 and len(s) % 8 != 0:
         #print len(s) % 8
         for x in xrange(8 - (len(s) % 8)):
             s += '0'
     
     bitstring = s
-    #print len(bitstring), float(len(bitstring)) / 8
     bts = []
     for i in xrange(0, len(bitstring), 8):
         by = int(bitstring[i:i+8], 2)
         bts.append(by)
         
+    with open('../ty.size', 'w') as f:
+        f.write(str(len(bts)))
+      
+    #print len(bts), a1, a2 
     #Write all unsigned integers into a file 
     sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
     

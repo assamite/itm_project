@@ -105,6 +105,83 @@ def bin2nums(filepath, enc, bts, add):
     '''
     hf = bin2str(filepath, enc, bts, add)
     return [float(x) for x in re.findall('[+-]\d+[.]\d+', hf)]
+
+
+def ints2hfbin(iterable, filepath = None):
+    '''Convert iterable of integers into Huffman encoded string, where each 
+    integer is converted into its own code word. The resulting Huffman coding
+    is added into the start of the binary. 
+    '''
+    ctr = Counter(iterable)
+    enc = _encode2dict(encode(ctr))
+    # Encode the Huffman coding into binary
+    encbin, add1 = hf2bin256(enc)
+    s = reduce(lambda x,y: x+enc[y],iterable, "")
+    
+    add2 = len(s) % 8
+    if add2 != 0:
+        add2 = 8 - add2
+        for i in xrange(add2):
+            s += "0"
+            
+    if filepath is not None:
+        bts = []
+        # Read 8 bits a time, convert it to unsigned integer
+        for i in xrange(0, len(s), 8): 
+            by = int(s[i:i+8], 2)
+            bts.append(by)
+        with open(filepath, 'w') as f:
+            f.write(pack('{}B'.format(len(bts)),*bts))
+            
+    return encbin, add1, s, add2
+    
+  
+def hf2bin256(encoding):
+    '''Convert Huffman encoding to a binary string. That is, given encoding is 
+    the mapping of symbols (integers) into code words.
+    
+    Has some expectations of the encoding. Look the code.
+    ''' 
+    l = len(encoding.keys())
+    s = "{:08b}".format(l)
+    #max = max([len(v) for v in encoding.values()])
+    items = encoding.items()
+    for k,v in items:
+        if k < 0 or k > 255:
+            raise ValueError("k == {}".format(k))
+        s += "{:08b}".format(k) # First encode the character into one byte
+        s += "{:08b}".format(len(v))
+    
+    for k,v in items:
+        s += v
+       
+    #print len(s), len(s) % 8, len(s) / 8.0, h, 190*2*8
+    add = len(s) % 8
+    if add != 0:
+        add = 8 - add
+        for i in xrange(add):
+            s += "0"
+           
+    return s, add
+            
+def bin2562hf(binstring,add):
+    l = int(binstring[:8],2)
+    b = binstring[8:-add]
+    chars = []
+    lengths = []
+    encs = []
+    for i in xrange(l):
+        chars.append(int(b[:8],2))
+        b=b[8:]
+        lengths.append(int(b[:8],2))
+        b=b[8:]
+    for i in xrange(l):
+        encs.append(b[:lengths[i]])
+        b = b[lengths[i]:]
+    return chars,encs
+        
+    
+    
     
     
 def _encode2dict(enc):

@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 # Seems like h/H is way to go with this data.
 stock = struct.unpack('1250H', open('../data/group.stock.dat').read())
-print stock
+#print stock
 #plt.plot(stock)
 #plt.show()
 
@@ -18,8 +18,8 @@ diffs = [stock[0]]
 for i,s in enumerate(stock[1:]):
     diffs.append(s-stock[i])
   
-#plt.plot(diffs[2:])
-#plt.show()
+plt.plot(diffs[2:])
+plt.show()
 
 enc, bts, a = utils.nums2bin(diffs,'stock.test')
 print len(bts)

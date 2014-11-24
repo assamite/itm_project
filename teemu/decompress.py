@@ -3,6 +3,7 @@ def g(h):
     return str(int(math.ceil(float(r[h]))))
 import math, numpy
 d=open("c","r").read().split("\n")
+d.pop()
 f=d[0]
 del d[0]
 o=[]
@@ -13,7 +14,8 @@ for i in range(len(d)):
     for j in range(len(r)-1):
         a=r[j]
         if j==2:
-            if r[3]!='' and a=='-1':l+=g(3)
+            if a=='-1':
+                if r[3]!='':l+=g(3)
             else:l+=a
         elif j==9:
             if r[3]!='' and a=='-1':l+=g(3)
@@ -31,10 +33,10 @@ for i in range(len(d)):
                     v=round(v,b)
                     if b==0:l+=str(int(v))
                     else: l+=str(v)
-
                 except:
                     l+=a
-        else: l+=r[j]
+        else: l+=a
         if j!=13:l+=';'
+       # if i==3880:l='kangastus tuominen;1453;;;;;;;;;;;;'
     o.append(l.replace(".",","))
 numpy.savetxt("pal",o,'%s')

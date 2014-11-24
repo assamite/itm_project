@@ -99,9 +99,8 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     residuals_dec_mapped = map(lambda x: residual_mappings.index(int(x)), residuals_dec)
     residuals_all = residuals_int_mapped + residuals_dec_mapped
     #print len(residuals_all)
-    np.savetxt("res_all",residuals_all,"%s")
     
-    enc, a1, s, a2 = utils.ints2hfbin(residuals_all, filepath = 'tyhf.test')
+    enc, a1, s, a2 = utils.ints2hfbin(residuals_all)
     #print a1, a2
     #print len(s), len(s) / 8.0
     #print len(s) / 8.0, len(signs) / 8.0
@@ -116,6 +115,9 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     for i in xrange(0, len(bitstring), 8):
         by = int(bitstring[i:i+8], 2)
         bts.append(by)
+        
+    with open('../ty.size', 'w') as f:
+        f.write(str(len(bts)))
       
     #print len(bts), a1, a2 
     #Write all unsigned integers into a file 

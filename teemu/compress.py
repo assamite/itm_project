@@ -66,6 +66,16 @@ for i in range(len(data)):
     else:
         maxdm2.append(record[9])
 
+lobes=[]
+for i in reversed(range(len(data))[1:]):
+    record=data[i].split(";")
+    record2=data[i-1].split(";")
+    if record[8]==record2[8]:
+        lobes.append('a')
+    else:
+        lobes.append(record[8])
+lobes.append(data[0].split(";")[8])
+
 
 newdata=[]
 newdata.append(firstline)
@@ -73,10 +83,12 @@ for i in range(len(data)):
     newrecord=''
     record = data[i].split(";")
     for j in range(len(record)):
-        if j!= 2 and j!=9 and j!=10 and j!=11 and j!=12:
+        if j!= 2 and j!=8 and j!=9 and j!=10 and j!=11 and j!=12:
             newrecord += (record[j]+';')
         elif j==2:
             newrecord += (str(maxdm1[i])+';')
+        elif j==8:
+            newrecord += lobes[len(data)-i-1]+';'
         elif j==9:
             newrecord += (str(maxdm2[i])+';')
         elif j==10:

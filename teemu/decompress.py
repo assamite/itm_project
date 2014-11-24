@@ -1,26 +1,27 @@
-__author__ = 'teemupitkanen1'
 def g(h):
     return str(int(math.ceil(float(r[h]))))
 import math, numpy
-d=open("c","r").read().split("\n")
-d.pop()
-f=d[0]
-del d[0]
+d=open("c","r").read().split("\n")[:-1]
 o=[]
-o.append(f)
+o.append(d[0])
+del d[0]
+b=0
 for i in range(len(d)):
     r=d[i].split(";")
     l=''
     for j in range(len(r)-1):
         a=r[j]
-        if j==2:
+        if j==2 or j==9:
             if a=='-1':
                 if r[3]!='':l+=g(3)
+            elif a=='-2':
+                if r[2]!='':l+=g(2)
             else:l+=a
-        elif j==9:
-            if r[3]!='' and a=='-1':l+=g(3)
-            elif r[2]!='' and a=='-2':l+=g(2)
-            else:l+=a
+        elif j==8:
+            if a=='a':l+=b
+            else:
+                l+=a
+                b=a
         elif j in range(10,13):
             if a=='-2':
                 l+='#DIV/0!'
@@ -36,7 +37,6 @@ for i in range(len(d)):
                 except:
                     l+=a
         else: l+=a
-        if j!=13:l+=';'
-       # if i==3880:l='kangastus tuominen;1453;;;;;;;;;;;;'
-    o.append(l.replace(".",","))
+        l+=';'
+    o.append(l.replace(".",",")[:-1])
 numpy.savetxt("pal",o,'%s')

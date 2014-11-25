@@ -1,4 +1,4 @@
-import sys,struct,re,numpy as np
+import sys,struct,re,numpy as np, math,bz2
 f=open(sys.argv[1]).read()
 b=reduce(lambda x,y:x+'{:08b}'.format(y),struct.unpack('{}B'.format(len(f)),f),"")
 l=int(b[:8],2)
@@ -17,7 +17,65 @@ if l==1:
     p=[-1.08,1363,1.0/60,15,1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2.64,1.0]
     r=range(256)
     r[210:213]=[256,276,342]
-    sys.stdout.write("\n".join([i for i in c(r,2000,p)])+"\n") 
+    sys.stdout.write("\n".join([i for i in c(r,2000,p)])+"\n")
+if l==2:
+    d=bz2.decompress(f[1:])[:-1].split("\n") ##!!!!
+    d=[str(x) for x in d]
+    o=[]
+    o.append(d[0])
+    del d[0]
+    z='0'
+    for i in range(len(d)):
+        r=d[i].split(";")
+        l=''
+        for j in range(len(r)-1):
+            a=r[j]
+            if j==2 or j==9:
+                if a=='-1':
+                    if r[3]!='':l+=str(int(math.ceil(float(r[3]))))
+                elif a=='-2':
+                    if r[2]!='':l+=str(int(math.ceil(float(r[2]))))
+                else:l+=a
+            elif j==8:
+                if a=='a':l+=z
+                else:
+                    l+=a
+                    z=a
+            elif j in range(10,13):
+                if a=='-2':
+                    l+='#DIV/0!'
+                elif a!='-1':
+                    try:
+                        b=int(a)
+                        if j==10:v=float(r[4])/float(r[3])
+                        elif j==11:v=float(r[4])/float(r[5])
+                        else:v=float(r[6])/float(r[3])
+                        v=round(v,b)
+                        if b==0:l+=str(int(v))
+                        else: l+=str(v)
+                    except:
+                        l+=a
+            elif j==13:
+                if a=='-2':
+                    l+='#DIV/0!'
+                elif i==636:l+='3'
+                elif i==1321:l+='2'
+                elif i==1793:l+='2'
+                elif i==2941:l+='1'
+                elif i==3415:l+='1'
+                elif a!='-1':
+                    try:
+                        b=int(a)
+                        v=round((float(r[3])/(float(r[3])-float(r[7])))**2,b)
+                        if b==0:
+                            v=int(v)
+                        l+=str(v)
+                    except:
+                        l+=a
+            else: l+=a
+            l+=';'
+        o.append(l.replace(".",",")[:-1])
+    sys.stdout.write("\n".join([x for x in o])+"\n")
 if l==3:
     p=[-1.08589,1365.49,0.016679,64.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,57.668242,5.0]
     r=range(256)

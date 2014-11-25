@@ -1,5 +1,5 @@
 __author__ = 'teemupitkanen1'
-import numpy as np, math
+import numpy as np, math,sys,bz2
 
 data=open("../data/paleo.csv","r").read().split("\n")
 print(data)
@@ -87,6 +87,7 @@ lobes.append(data[0].split(";")[8])
 
 newdata=[]
 newdata.append(firstline)
+newstring=firstline
 for i in range(len(data)):
     newrecord=''
     record = data[i].split(";")
@@ -108,5 +109,9 @@ for i in range(len(data)):
         else:
             newrecord += (str(accuracy[i][3])+';')
     newdata.append(newrecord)
-print(newdata)
-np.savetxt("c",newdata,'%s')
+    newstring+=newrecord+'\n'
+#np.savetxt("c",newdata,'%s')
+bits=bz2.compress(newstring)
+bits = "{0:08b}".format(2)+bits
+sys.stdout.write(bits)
+

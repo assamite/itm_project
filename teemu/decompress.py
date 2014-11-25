@@ -37,9 +37,7 @@ for i in range(len(d)):
                 except:
                     l+=a
         elif j==13:
-            if a=='-2':
-                l+='#DIV/0!'
-            elif i==636:l+='3'
+            if i==636:l+='3'
             elif i==1321:l+='2'
             elif i==1793:l+='2'
             elif i==2941:l+='1'

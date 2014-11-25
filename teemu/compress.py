@@ -2,7 +2,7 @@ __author__ = 'teemupitkanen1'
 import numpy as np, math
 
 data=open("../data/paleo.csv","r").read().split("\n")
-print(data)
+#print(data)
 firstline=data[0]
 del data[0]
 data.pop()
@@ -108,5 +108,5 @@ for i in range(len(data)):
         else:
             newrecord += (str(accuracy[i][3])+';')
     newdata.append(newrecord)
-print(newdata)
+#print(newdata)
 np.savetxt("c",newdata,'%s')

@@ -2,6 +2,7 @@
 '''
 import struct,utils,sys,gzip
 import numpy as np
+import math, bz2
 
 ids = {
     'curve1.dat': 1,
@@ -132,4 +133,124 @@ if sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
     enc, bts, a = utils.nums2bin(diffs)
     bts = [ids['group.stock.dat']] + bts
     sys.stdout.write(struct.pack('{}B'.format(len(bts)), *bts))
+
+if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
+    data=open(sys.argv[1]).read().split("\n")[:-1]
+    firstline=data[0]
+    del data[0]
+    data=[x.replace(",",".") for x in data]
+
+    # The next part generates array 'accuracy' It contains the length of the decimal part for the entries in fields
+    # 10,...,13, in the case where the result can be calculated from the values in fields dm,ah,wh,ww and uw. Negative
+    # special values are reserved for abnormal values,  -1 = ''(empty field), -2 = '#DIV/0!'.
+    # In the case where the value of a field cannot be correctly deduced from the fields ww,wh,ah,dm,uw, the
+    # corresponding field in 'accuracy' contains the original value from the data
+
+    accuracy = []
+    for i in range(len(data)):
+        row=[0,0,0,0] # 'row' contains 'accuracy' values of a single record, appended later to 'accuracy'
+        record = data[i].split(";")
+        for indx in range(0,4):
+            if record[10+indx]=='':
+                row[indx]=-1
+            elif record[10+indx]=='#DIV/0!':
+                row[indx]=-2
+            else:
+                temp = record[10+indx].split(".")
+                if len(temp)==2:
+                    row[indx]=len(temp[1])
+
+        for k in range(1,len(record)):
+            if record[k]=='' or record[k]=='#DIV/0!':
+                record[k]='0'
+            record[k]=float(record[k])
+
+        if record[3]==0:
+            if record[10]!=0 and row[0]>=0:
+                row[0]=record[10]
+            if record[12]!=0 and row[2]>=0:
+                row[2]=record[12]
+        else:
+            if record[10] != round(record[4]/record[3], row[0]) and row[0]>=0:
+                row[0]=record[10]
+            if record[12] != round(record[6]/record[3], row[2]) and row[2]>=0:
+                row[2]=record[12]
+        if record[5]==0:
+            if record[11]!=0 and row[1]>=0:
+                row[1]=record[11]
+        elif record[11] != round(record[4]/record[5], row[1]) and row[1] >=0:
+            row[1]=record[11]
+        if(record[3]-record[7]==0) and row[3]>=0:
+            row[3]=record[13]
+        elif row[3]>=0 and record[13] != round((record[3]/(record[3]-record[7]))**2,row[3]):
+            row[3]=record[13]
+        row = [str(x) for x in row]
+        accuracy.append(row)
+
+    # Now, we do a similar trick to the three diameter fields. The two maxdm-fields are often deducible by rounding the
+    # dm value up to the next integer. Also, the second maxdm is often the same as the first. maxdm1 and maxdm2 contain
+    # the values of the first and second maxdm fields, with values in both replaced by '-1' if the original value equals
+    # the dm-field rounded up. '-2' marks the case where the second maxdm doesn't equal round(dm), but equals the first maxdm
+
+    maxdm1 = []
+    maxdm2 = []
+    for i in range(len(data)):
+        record=data[i].split(";")
+        try:dm = str(int(math.ceil((float(record[3])))))
+        except: dm=''
+        if record[2] == dm:
+            maxdm1.append(-1)
+        else:
+            maxdm1.append(record[2])
+        if record[9] == dm:
+            maxdm2.append(-1)
+        elif record[9]==record[2]:
+            maxdm2.append(-2)
+        else:
+            maxdm2.append(record[9])
+
+    # The value of the lobes field is often the same in consecutive records. We save a little space (approx 1k after
+    # bzip) by replacing the value with 'a' if the lobes value of a record is the same as that of the previous record.
+
+    lobes=[]
+    for i in reversed(range(len(data))[1:]):
+        record=data[i].split(";")
+        record2=data[i-1].split(";")
+        if record[8]==record2[8]:
+            lobes.append('a')
+        else:
+            lobes.append(record[8])
+    lobes.append(data[0].split(";")[8])
+
+    # Now, we just need to generate the new data, with the values replaced by the ones we just calculated.
+    newdata=[]
+    newstring=firstline+'\n'
+    newdata.append(firstline)
+    for i in range(len(data)):
+        newrecord=''
+        record = data[i].split(";")
+        for j in range(len(record)):
+            if j!= 2 and j!=8 and j!=9 and j!=10 and j!=11 and j!=12 and j!=13:
+                newrecord += (record[j]+';')
+            elif j==2:
+                newrecord += (str(maxdm1[i])+';')
+            elif j==8:
+                newrecord += lobes[len(data)-i-1]+';'
+            elif j==9:
+                newrecord += (str(maxdm2[i])+';')
+            elif j==10:
+                newrecord += (str(accuracy[i][0])+';')
+            elif j==11:
+                newrecord += (str(accuracy[i][1])+';')
+            elif j==12:
+                newrecord += (str(accuracy[i][2])+';')
+            else:
+                newrecord += (str(accuracy[i][3])+';')
+        newdata.append(newrecord)
+        newstring+=newrecord+'\n'
+    bits=bz2.compress(newstring)
+    bits = struct.pack('B',2)+bits
+    #bits = struct.pack("{0:08b}".format(ids['paleo.csv']))+bits
+    #bits = struct.pack("{0:08b}",ids['paleo.csv'])+bits
+    sys.stdout.write(bits)
     

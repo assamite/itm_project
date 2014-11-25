@@ -8,7 +8,8 @@ ids = {
     'curve1.dat': 1,
     'paleo.csv': 2,
     'ty.txt': 3,  
-    'group.stock.dat': 4
+    'group.stock.dat': 4,
+    'monty_python_data_1.dat': 5,
     }
 
 def curve1_compressor(x, a, b, c, d, e, f, g, h, i, j, k, multiplier):
@@ -100,8 +101,9 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     residuals_dec_mapped = map(lambda x: residual_mappings.index(int(x)), residuals_dec)
     residuals_all = residuals_int_mapped + residuals_dec_mapped
     #print len(residuals_all)
+    np.savetxt("res_all",residuals_all,"%s")
     
-    enc, a1, s, a2 = utils.ints2hfbin(residuals_all)
+    enc, a1, s, a2 = utils.ints2hfbin(residuals_all, filepath = 'tyhf.test')
     #print a1, a2
     #print len(s), len(s) / 8.0
     #print len(s) / 8.0, len(signs) / 8.0
@@ -116,9 +118,6 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     for i in xrange(0, len(bitstring), 8):
         by = int(bitstring[i:i+8], 2)
         bts.append(by)
-        
-    with open('../ty.size', 'w') as f:
-        f.write(str(len(bts)))
       
     #print len(bts), a1, a2 
     #Write all unsigned integers into a file 
@@ -254,3 +253,8 @@ if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
     #bits = struct.pack("{0:08b}",ids['paleo.csv'])+bits
     sys.stdout.write(bits)
     
+    
+if sys.argv[1][-len('monty_python_data_1.dat'):] == 'monty_python_data_1.dat':
+    b = "{:08b}".format(ids['monty_python_data_1.dat'])
+    bts = [int(b, 2)]
+    sys.stdout.write(struct.pack('1B', *bts))

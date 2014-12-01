@@ -19,63 +19,50 @@ if l==1:
     r[210:213]=[256,276,342]
     sys.stdout.write("\n".join([i for i in c(r,2000,p)])+"\n")
 if l==2:
-    d=bz2.decompress(f[1:])[:-1].split("\n") ##!!!!
-    d=[str(x) for x in d]
-    o=[]
-    o.append(d[0])
-    del d[0]
-    z='0'
-    for i in range(len(d)):
-        r=d[i].split(";")
-        l=''
-        for j in range(len(r)-1):
-            a=r[j]
-            if j==2 or j==9:
-                if a=='-1':
-                    if r[3]!='':l+=str(int(math.ceil(float(r[3]))))
-                elif a=='-2':
-                    if r[2]!='':l+=str(int(math.ceil(float(r[2]))))
-                else:l+=a
-            elif j==8:
-                if a=='a':l+=z
+    w=[]
+    k = [83,23899,6800,2214,5143,4558,4604,4270,1365,964,1381,1912,2607,1939,2153]
+    o=1
+    for x in range(15):
+        w.append(bz2.decompress(f[o:o+k[x]]).split(";")[:-1])
+        o=o+k[x]
+    d=';'.join(w[0])+';WER\n'
+    del w[0]
+    j=''
+    for x in range(4128):
+        for l in range(14):
+            if l in [0,1,3,4,5,6,7]:
+                d+=(w[l][x])
+            elif l in [2,9]:
+                if w[l][x]=='a':
+                    try:d+=(str(int(math.ceil(float(w[3][x])))))
+                    except:pass
+                elif w[l][x]=='b':d+=w[2][x]
+                else: d+= w[l][x]
+            elif l==8:
+                if w[l][x]=='a':d+=j
                 else:
-                    l+=a
-                    z=a
-            elif j in range(10,13):
-                if a=='-2':
-                    l+='#DIV/0!'
-                elif a!='-1':
+                    j=w[l][x]
+                    d+=j
+            else:
+                if w[l][x]=='b':d+='#DIV/0!'
+                elif w[l][x]!='a':
                     try:
-                        b=int(a)
-                        if j==10:v=float(r[4])/float(r[3])
-                        elif j==11:v=float(r[4])/float(r[5])
-                        else:v=float(r[6])/float(r[3])
-                        v=round(v,b)
-                        if b==0:l+=str(int(v))
-                        else: l+=str(v)
-                    except:
-                        l+=a
-            elif j==13:
-                if a=='-2':
-                    l+='#DIV/0!'
-                elif i==636:l+='3'
-                elif i==1321:l+='2'
-                elif i==1793:l+='2'
-                elif i==2941:l+='1'
-                elif i==3415:l+='1'
-                elif a!='-1':
-                    try:
-                        b=int(a)
-                        v=round((float(r[3])/(float(r[3])-float(r[7])))**2,b)
-                        if b==0:
-                            v=int(v)
-                        l+=str(v)
-                    except:
-                        l+=a
-            else: l+=a
-            l+=';'
-        o.append(l.replace(".",",")[:-1])
-    sys.stdout.write("\n".join([x for x in o])+"\n")
+                        if l==10:v=float(w[4][x])/float(w[3][x])
+                        elif l==11:v=float(w[4][x])/float(w[5][x])
+                        elif l==12:v=float(w[6][x])/float(w[3][x])
+                        else:
+                            if x==636:v='3'
+                            elif x in [1321,1793]:v='2'
+                            elif x in [2941,3415]:v='1'
+                            else:v=(float(w[3][x])/(float(w[3][x])-float(w[7][x])))**2
+                        v=round(v,int(w[l][x]))
+                        if w[l][x]=='0':d+=str(int(v))
+                        else:d+=str(v)
+                    except:d+=w[l][x]
+            if l!=13:d+=';'
+        d+='\n'
+    d=d.replace(".",",")
+    sys.stdout.write(d)
 if l==3:
     p=[-1.08589,1365.49,0.016679,64.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,57.668242,5.0]
     r=range(256)

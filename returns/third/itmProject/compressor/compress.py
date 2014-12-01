@@ -136,121 +136,90 @@ if sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
 
 if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
     data=open(sys.argv[1]).read().split("\n")[:-1]
-    firstline=data[0]
-    del data[0]
-    data=[x.replace(",",".") for x in data]
-
-    # The next part generates array 'accuracy' It contains the length of the decimal part for the entries in fields
-    # 10,...,13, in the case where the result can be calculated from the values in fields dm,ah,wh,ww and uw. Negative
-    # special values are reserved for abnormal values,  -1 = ''(empty field), -2 = '#DIV/0!'.
-    # In the case where the value of a field cannot be correctly deduced from the fields ww,wh,ah,dm,uw, the
-    # corresponding field in 'accuracy' contains the original value from the data
-
-    accuracy = []
+    strings=['','','','','','','','','','','','','','','']
+    strings[14]+=data[0]
+    data = [x.replace(",",".") for x in data[1:]]
+    previouslobes=0
     for i in range(len(data)):
-        row=[0,0,0,0] # 'row' contains 'accuracy' values of a single record, appended later to 'accuracy'
         record = data[i].split(";")
-        for indx in range(0,4):
-            if record[10+indx]=='':
-                row[indx]=-1
-            elif record[10+indx]=='#DIV/0!':
-                row[indx]=-2
-            else:
-                temp = record[10+indx].split(".")
-                if len(temp)==2:
-                    row[indx]=len(temp[1])
+        # Field name - no specific implementation yet
+        strings[0] += record[0]
 
-        for k in range(1,len(record)):
-            if record[k]=='' or record[k]=='#DIV/0!':
-                record[k]='0'
-            record[k]=float(record[k])
+        # Field ??? - no specific implementation yet
+        strings[1] += record[1]
 
-        if record[3]==0:
-            if record[10]!=0 and row[0]>=0:
-                row[0]=record[10]
-            if record[12]!=0 and row[2]>=0:
-                row[2]=record[12]
-        else:
-            if record[10] != round(record[4]/record[3], row[0]) and row[0]>=0:
-                row[0]=record[10]
-            if record[12] != round(record[6]/record[3], row[2]) and row[2]>=0:
-                row[2]=record[12]
-        if record[5]==0:
-            if record[11]!=0 and row[1]>=0:
-                row[1]=record[11]
-        elif record[11] != round(record[4]/record[5], row[1]) and row[1] >=0:
-            row[1]=record[11]
-        if(record[3]-record[7]==0) and row[3]>=0:
-            row[3]=record[13]
-        elif row[3]>=0 and record[13] != round((record[3]/(record[3]-record[7]))**2,row[3]):
-            row[3]=record[13]
-        row = [str(x) for x in row]
-        accuracy.append(row)
-
-    # Now, we do a similar trick to the three diameter fields. The two maxdm-fields are often deducible by rounding the
-    # dm value up to the next integer. Also, the second maxdm is often the same as the first. maxdm1 and maxdm2 contain
-    # the values of the first and second maxdm fields, with values in both replaced by '-1' if the original value equals
-    # the dm-field rounded up. '-2' marks the case where the second maxdm doesn't equal round(dm), but equals the first maxdm
-
-    maxdm1 = []
-    maxdm2 = []
-    for i in range(len(data)):
-        record=data[i].split(";")
+        # Field maxdm(1) - Replace values that equal ceil(dm) with marker 'a'. Otherwise original values.
         try:dm = str(int(math.ceil((float(record[3])))))
         except: dm=''
-        if record[2] == dm:
-            maxdm1.append(-1)
-        else:
-            maxdm1.append(record[2])
-        if record[9] == dm:
-            maxdm2.append(-1)
-        elif record[9]==record[2]:
-            maxdm2.append(-2)
-        else:
-            maxdm2.append(record[9])
+        if record[2] == dm:strings[2] += 'a'
+        else: strings[2] += record[2]
 
-    # The value of the lobes field is often the same in consecutive records. We save a little space (approx 1k after
-    # bzip) by replacing the value with 'a' if the lobes value of a record is the same as that of the previous record.
+        # Fields dm, ww, wh, uw, ah - no specific implementation yet
+        for j in range(3,8):
+            strings[j] += record[j]
 
-    lobes=[]
-    for i in reversed(range(len(data))[1:]):
-        record=data[i].split(";")
-        record2=data[i-1].split(";")
-        if record[8]==record2[8]:
-            lobes.append('a')
+        # Field lobes - Replace values that equal that of the previous record with marker 'a'. Otherwise original values.
+        if record[8] == previouslobes: strings[8] += 'a'
         else:
-            lobes.append(record[8])
-    lobes.append(data[0].split(";")[8])
+            strings[8] += record[8]
+            previouslobes = record[8]
 
-    # Now, we just need to generate the new data, with the values replaced by the ones we just calculated.
-    newdata=[]
-    newstring=firstline+'\n'
-    newdata.append(firstline)
-    for i in range(len(data)):
-        newrecord=''
-        record = data[i].split(";")
-        for j in range(len(record)):
-            if j!= 2 and j!=8 and j!=9 and j!=10 and j!=11 and j!=12 and j!=13:
-                newrecord += (record[j]+';')
-            elif j==2:
-                newrecord += (str(maxdm1[i])+';')
-            elif j==8:
-                newrecord += lobes[len(data)-i-1]+';'
-            elif j==9:
-                newrecord += (str(maxdm2[i])+';')
-            elif j==10:
-                newrecord += (str(accuracy[i][0])+';')
-            elif j==11:
-                newrecord += (str(accuracy[i][1])+';')
-            elif j==12:
-                newrecord += (str(accuracy[i][2])+';')
+        # Field maxdm(2) - Replace values that equal ceil(dm) with marker 'a', and those that equal maxdm(1) with marker
+        # 'b'. Otherwise original values.
+        if record[9] == dm: strings[9] += 'a'
+        elif record[9] == record[2]: strings[9] += 'b'
+        else: strings[9] += record[9]
+
+        # Fields ww/dm, ww/wh, uw/dm, WER ((dm/(dm-ah)^2) - Values replaced as follows:
+        # Integer value 0-9:    The accuracy of the field (the length of the decimal part), if
+        #                       the field can be generated by the calculation in the name of the field
+        # 'a':                  If the field is empty ('')
+        # 'b':                  If the field contains a 'division by zero'-error marker '#DIV/0!'
+        # Original value:       Otherwise (field contains some value, but it seems arbitrary)
+
+        for j in range(10,14):
+            if record[j] == '': strings[j] += 'a'
+            elif record[j] == '#DIV/0!': strings[j] += 'b'
             else:
-                newrecord += (str(accuracy[i][3])+';')
-        newdata.append(newrecord)
-        newstring+=newrecord+'\n'
-    bits=bz2.compress(newstring)
+                try: accuracy = len(record[j].split(".")[1])
+                except: accuracy = 0
+                if j==10:
+                    try:
+                        if float(record[10]) == round(float(record[4])/float(record[3]),accuracy):
+                            strings[j] += str(accuracy)
+                        else: strings[j] += record[10]
+                    except: strings[j] += record[10]
+
+                elif j==11:
+                    try:
+                        if float(record[11]) == round(float(record[4])/float(record[5]),accuracy):
+                            strings[j] += str(accuracy)
+                        else: strings[j] += record[11]
+                    except: strings[j] += record[11]
+                elif j==12:
+                    try:
+                        if float(record[12]) == round(float(record[6])/float(record[3]),accuracy):
+                            strings[j] += str(accuracy)
+                        else:
+                            strings[j] += record[12]
+                    except:
+                        strings[j] += record[12]
+                elif j==13:
+                    try:
+                        if float(record[13]) == round((float(record[3])/(float(record[3])-float(record[7])))**2,accuracy):
+                            strings[j] += str(accuracy)
+                        else: strings[j] += record[13]
+                    except: strings[j] += record[13]
+
+
+        # Adding delimiters between values
+        for j in range(len(strings))[:-1]:
+            strings[j] += ';'
+
+    # Compress column by column with bzip2 and concatenate the resulting bitstrings
+    bits=bz2.compress(strings[14])
+    for x in range(len(strings))[:-1]:
+        bit = bz2.compress(strings[x])
+        bits += bit
     bits = struct.pack('B',2)+bits
-    #bits = struct.pack("{0:08b}".format(ids['paleo.csv']))+bits
-    #bits = struct.pack("{0:08b}",ids['paleo.csv'])+bits
     sys.stdout.write(bits)
-    

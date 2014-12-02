@@ -16,9 +16,9 @@ for i in range(len(data)):
     record = data[i].split(";")
     for indx in range(0,4):
         if record[10+indx]=='':
-            row[indx]=-1
+            row[indx]='a'
         elif record[10+indx]=='#DIV/0!':
-            row[indx]=-2
+            row[indx]='b'
         else:
             temp = record[10+indx].split(".")
             if len(temp)==2:
@@ -31,26 +31,26 @@ for i in range(len(data)):
         record[k]=float(record[k])
 
     if record[3]==0:
-        if record[10]!=0 and row[0]>=0:
+        if record[10]!=0 and row[0] not in ['a','b']:
             row[0]=record[10]
-        if record[12]!=0 and row[2]>=0:
+        if record[12]!=0 and row[2] not in ['a','b']:
             row[2]=record[12]
     else:
-        if record[10] != round(record[4]/record[3], row[0]) and row[0]>=0:
+        if row[0] not in ['a','b'] and record[10] != round(record[4]/record[3], row[0]):
             row[0]=record[10]
-        if record[12] != round(record[6]/record[3], row[2]) and row[2]>=0:
+        if row[2] not in ['a','b'] and record[12] != round(record[6]/record[3], row[2]):
             row[2]=record[12]
     if record[5]==0:
-        if record[11]!=0 and row[1]>=0:
+        if record[11]!=0 and row[1] not in ['a','b']:
             row[1]=record[11]
-    elif record[11] != round(record[4]/record[5], row[1]) and row[1] >=0:
+    elif row[1] not in ['a','b'] and record[11] != round(record[4]/record[5], row[1]):
   #      row[1]=+record[11] WHATWHATWHAT ilmeisesti typo, vaikka on toiminut
         row[1]=record[11]
 
     # WER!
-    if(record[3]-record[7]==0) and row[3]>=0:
+    if(record[3]-record[7]==0) and row[3] not in ['a','b']:
         row[3]=record[13]
-    elif row[3]>=0 and record[13] != round((record[3]/(record[3]-record[7]))**2,row[3]):
+    elif row[3] not in ['a','b'] and record[13] != round((record[3]/(record[3]-record[7]))**2,row[3]):
         row[3]=record[13]
 
     row = [str(x) for x in row]
@@ -64,15 +64,15 @@ for i in range(len(data)):
     try:dm = str(int(math.ceil((float(record[3])))))
     except: dm=''
     if record[2] == dm:
-        maxdm1.append(-1)
+        maxdm1.append('a')
     else:
-        maxdm1.append(record[2])
+        maxdm1.append(str(record[2]))
     if record[9] == dm:
-        maxdm2.append(-1)
+        maxdm2.append('a')
     elif record[9]==record[2]:
-        maxdm2.append(-2)
+        maxdm2.append('b')
     else:
-        maxdm2.append(record[9])
+        maxdm2.append(str(record[9]))
 
 lobes=[]
 for i in reversed(range(len(data))[1:]):
@@ -110,8 +110,15 @@ for i in range(len(data)):
             newrecord += (str(accuracy[i][3])+';')
     newdata.append(newrecord)
     newstring+=newrecord+'\n'
-#np.savetxt("c",newdata,'%s')
-bits=bz2.compress(newstring)
-bits = "{0:08b}".format(2)+bits
+strings=['','','','','','','','','','','','','','']
+del newdata[0]
+for i in range(len(data)):
+    record=newdata[i].split(";")
+    for j in range(14):
+        strings[j]+=record[j]+';'
+bits=bz2.compress(firstline)
+for i in range(0,14):
+    bits+=bz2.compress(strings[i])
+
 sys.stdout.write(bits)
 

@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ ! -f decompressor/d.py ]; then
 	bunzip2 decompressor/d.py.bz2
 fi

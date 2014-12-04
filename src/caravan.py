@@ -1,7 +1,11 @@
 '''Caravan.dat thingies
 '''
+import matplotlib
+matplotlib.use('TkAgg')
 import numpy as np
 from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import proj3d
 from collections import Counter
 import operator
 
@@ -154,13 +158,76 @@ def split_data(data, sdat_file = "../sdata/caravan.sdat"):
     return d0, d1, sdata
 
 
+def svd3D(data = None, plot = True, indeces = None):
+    '''SVD with three components.'''
+    if data is None:
+        data = read_data()
+        data = data[:, 1:]
+        
+    from sklearn.decomposition import TruncatedSVD
+    svd = TruncatedSVD(n_components = 3)
+    tsvd = svd.fit_transform(data)
+    if plot:
+        X = tsvd[:, 0]
+        Y = tsvd[:, 1]
+        Z = tsvd[:, 2]    
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        if indeces is None:
+            indeces = 'blue'
+        ax.scatter(X,Y,Z, c = indeces)
+        plt.tight_layout()
+        plt.show()
+    
+    return tsvd
 
+
+def pca3D(data = None, plot = True, indeces = None):
+    '''PCA first three components.'''
+    if data is None:
+        data = read_data()
+        data = data[:, 1:]
+        
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components = 3)
+    tpca = pca.fit_transform(data)
+    if plot:
+        X = tpca[:, 0]
+        Y = tpca[:, 1]
+        Z = tpca[:, 2]    
+        fig = plt.figure()
+        if indeces is None:
+            indeces = 'blue'
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(X,Y,Z, c = indeces)
+        plt.tight_layout()
+        plt.show()
+        
+    
+    
+    return tpca
+        
+    
+def kmeans(data = None):
+    if data is None:
+        data = read_data()
+        data = data[:, 1:]
+    
+    from sklearn.cluster import KMeans
+    km = KMeans(n_clusters = 30, max_iter = 500)
+    clusters = km.fit_predict(data)
+    
+    return clusters
+    
+    
             
                 
 if __name__ == "__main__":
-    data = read_data()
-    d0, d1, sdata = split_data(data)
+    indeces = kmeans()
+    svd3D(indeces = indeces)
+    #data = read_data()
+    #d0, d1, sdata = split_data(data)
     #dists = pairwise_dependencies(d0, normalize = False, plot = True)
     #dists = pairwise_dependencies(d1, normalize = False, plot = True)
-    dists = mutual_info(d0, plot = True)
-    dists = mutual_info(d1, plot = True)
+    #dists = mutual_info(d0, plot = True)
+    #dists = mutual_info(d1, plot = True)

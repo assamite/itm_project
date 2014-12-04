@@ -114,6 +114,7 @@ def ints2hfbin(iterable, filepath = None):
     '''
     ctr = Counter(iterable)
     enc = _encode2dict(encode(ctr))
+    #print max([len(e) for e in enc.values()])
     # Encode the Huffman coding into binary
     encbin, add1 = hf2bin256(enc)
     s = reduce(lambda x,y: x+enc[y],iterable, "")
@@ -143,14 +144,15 @@ def hf2bin256(encoding):
     Has some expectations of the encoding. Look the code.
     ''' 
     l = len(encoding.keys())
+    lb = int(np.ceil(np.log2(max([len(e) for e in encoding.values()]))))
     s = "{:08b}".format(l)
     #max = max([len(v) for v in encoding.values()])
     items = encoding.items()
     for k,v in items:
         if k < 0 or k > 255:
             raise ValueError("k == {}".format(k))
-        s += "{:08b}".format(k) # First encode the character into one byte
-        s += "{:08b}".format(len(v))
+        s += "{:08b}".format(k) # First encode the symbol into one byte
+        s += ("{:0" + str(lb) + "b}").format(len(v))
     
     for k,v in items:
         s += v

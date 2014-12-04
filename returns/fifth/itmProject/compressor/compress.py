@@ -73,7 +73,7 @@ if sys.argv[1][-len('curve1.dat'):] == 'curve1.dat':
 if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     orig = np.array([float(i.strip()) for i in open(sys.argv[1]).read().split()])
     ran = np.linspace(0,1999,num=10000)
-    p = [-1.08589, 1365.49, 0.016679, 64.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,57.668242,5]
+    p = [-1.08589, 1365.49, 0.016679, 58.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,51.668242,5]
     estimates = curve1_compressor(ran, *p)
     estimates = np.array([round(e, 2) for e in estimates])
     residuals = orig - estimates
@@ -85,23 +85,28 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     residuals_dec = [r +"0" if len(r)==1 else r for r in residuals_dec]
     residuals_int_set = set(residuals_int)
     residuals_int_sorted = sorted(list(residuals_int_set))
+    #print len(residuals_int_sorted)
     
     residual_mappings = range(256)
-    residual_mappings[210:216] = [347,5578,6625,7898,8650,9622]
-       
-    anomalies = [1323,1777,1827,4337,6250,6251,6252,9563]
+    residual_mappings[210:216] = [353, 5584, 6631, 7904, 8656, 9628]
+    '''  
+    for i in xrange(len(residuals_int)):
+        if int(residuals_abs[i]) != residuals_int[i]:
+            print i, residuals_abs[i], residuals_int[i]
+    ''' 
+    anomalies = [1323,1777, 4337,9563]
     # Uhh, where do these come from?
-    residuals_int[1323] = 82
-    residuals_int[1777] = 14
-    residuals_int[1827] = 29
-    residuals_int[4337] = 33
-    residuals_int[9563] = 134
+    residuals_int[1323] += 1
+    residuals_int[1777] += 1
+    residuals_int[4337] += 1
+    residuals_int[9563] += 1
+    
     
     residuals_int_mapped = map(lambda x: residual_mappings.index(x), residuals_int)
     residuals_dec_mapped = map(lambda x: residual_mappings.index(int(x)), residuals_dec)
     residuals_all = residuals_int_mapped + residuals_dec_mapped
     #print len(residuals_all)
-    np.savetxt("res_all",residuals_all,"%s")
+    #np.savetxt("res_all",residuals_all,"%s")
     
     enc, a1, s, a2 = utils.ints2hfbin(residuals_all, filepath = 'tyhf.test')
     #print a1, a2

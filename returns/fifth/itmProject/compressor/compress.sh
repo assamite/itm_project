@@ -5,6 +5,8 @@ if [ $s == 11644 ]; then
 	bzip2 -c $2	
 elif [ $s == 14028 ] || [ $s == 2500 ] || [ $s = 65275 ] || [ $s == 328757 ] || [ $s == 2700 ]; then
 	python compressor/compress.py $1 $2
+elif [ $s == 258505 ]; then
+	cat $2	
 else
 	cat $1
 fi

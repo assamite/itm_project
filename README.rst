@@ -5,8 +5,11 @@ Data file ID's::
 
 	1		curve1.dat
 	2		paleo.csv
-        3		ty.txt
-        4		group.stock.dat
+    3		ty.txt
+    4		group.stock.dat
+    5		monty_python_data_1.dat
+    6		caravan.dat
+    7		final.dat
 
 
 Project structure::

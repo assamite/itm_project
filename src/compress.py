@@ -24,6 +24,15 @@ def curve1_compressor(x, a, b, c, d, e, f, g, h, i, j, k, multiplier):
     return np.array(val)
 
 
+def poly55(x,y,p00,p10,p01,p20,p11,p02,p30,p21,p12,p03,p40,p31,p22,p13,p04,p50,p41,p32,p23,p14,p05):
+    return p00 + p10*x + p01*y + p20*x**2 + p11*x*y + p02*y**2 + p30*x**3 +\
+        p21*x**2*y + p12*x*y**2 + p03*y**3 + p40*x**4 + p31*x**3*y +\
+        p22*x**2*y**2 + p13*x*y**3 + p04*y**4 + p50*x**5 + p41*x**4*y +\
+        p32*x**3*y**2 + p23*x**2*y**3 + p14*x*y**4 + p05*y**5
+        
+def poly2(x,p1,p2,p3):
+    return p1*x**2 + p2*x + p3
+
 if sys.argv[1][-len('curve1.dat'):] == 'curve1.dat':
     orig = np.array([float(i.strip()) for i in open(sys.argv[1]).read().split()])
     ran = np.linspace(0,1999,num=2000)
@@ -234,3 +243,84 @@ if sys.argv[1][-len('monty_python_data_1.dat'):] == 'monty_python_data_1.dat':
     b = "{:08b}".format(ids['monty_python_data_1.dat'])
     bts = [int(b, 2)]
     sys.stdout.write(struct.pack('1B', *bts))
+    
+    
+if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
+    a=np.array([[float(i) for i in e.split()] for e in open(sys.argv[1]).read().split("\n")[:-1]])
+    Y=a[:,0]
+    Z=a[:,1]
+    #for s in sdat:
+    #    l = s.split(" ")
+    #    Y.append(float(l[0]))
+    #    Z.append(float(l[1]))
+    Y = np.array(Y)
+    Z = np.array(Z)
+    X = np.array([float(x) for x in open(sys.argv[2]).read().split()])
+    #print Y.shape, Z.shape, X.shape
+    indeces = np.zeros(X.shape)
+    p2coef = [0.7028,2.771,-6.879]
+    p50coef = [-18.290171,1.221760,9.672956,0.593337,0.930333,-0.857963,0.081794,0.110596,-0.004892,0.202391,-0.006623,-0.024314,-0.004627,0.007206,-0.035267,-0.001812,0.002337,-0.002610,0.006790,0.014688,-0.165668]
+    p51coef = [3.129242,2.742070,-5.965026,0.843920,-0.488139,-1.651493,0.034052,-0.089867,0.215533,0.089603,-0.004858,0.005126,0.029028,0.145531,0.056595,-0.001043,0.000423,0.002002,0.014120,0.013710,0.005316]
+    
+    # Choose with model to use for each data point by check is the data point under or above the curve.
+    for i,e in enumerate(indeces):
+        if poly2(Y[i],*p2coef) < X[i]:
+            indeces[i] = 1
+            
+    # Calculate residuals based on the model
+    residuals = np.zeros(X.shape)
+    for i,r in enumerate(residuals):
+        y = Y[i]
+        z = Z[i]
+        if indeces[i] == 1:
+            surface = poly55(y,z,*p51coef)
+        else:
+            surface = poly55(y,z,*p50coef)
+        res = X[i] - surface
+        residuals[i] = round(res, 3)
+    
+    ires = [(str(int(i)) if i<0 else '+'+str(int(i))) if int(i)!=0 else ('-0' if i<0 else '+0') for i in residuals]
+    #print ires[:10], set(ires)
+    iires = ['-'+e if indeces[i]==0 else '+'+e for i,e in enumerate(ires)]
+    ind = sorted(list(set(iires)))
+    #print ind, set(iires)
+    iiires = [ind.index(i) for i in iires]
+    enchf, a1, ihf, a2 = utils.ints2hfbin(iiires) 
+    #print len(enchf) / 8.0, len(ihf) / 8.0
+    #print (len(enchf) + len(ihf)) / 8.0
+    #print a1, a2
+    
+    ares = np.array([str(round(abs(r) - abs(int(r)),3)).split(".")[1] for r in residuals])
+    dres = [r if len(r)==3 else (r+"0" if len(r)==2 else r+"00") for r in ares]
+    #print dres[:20]
+    #for d in dres:
+    #    if len(d) != 3:
+    #        print d
+            
+    sdres = reduce(lambda x,y: x + y, dres, "")
+    #print len(sdres)
+    hf, enc = utils.str2encode(sdres)
+    #print len(hf) / 8.0
+    if len(hf) % 8 != 0:
+        a3 = 8 - len(hf) % 8
+        for i in xrange(a3):
+            hf += '0'
+            
+   # print len(hf) / 8.0, a3
+    
+    denc = {}
+    for k,v in enc.items():
+        denc[int(k)] = v
+
+    denchf, a4 = utils.hf2bin256(denc)
+    #print denc
+    #print len(denchf) / 8.0, a4
+    bitstring = "{:08b}".format(ids['final.dat']) + enchf + ihf + denchf + hf
+    bts = []
+    for i in xrange(0, len(bitstring), 8):
+        by = int(bitstring[i:i+8], 2)
+        bts.append(by) 
+    
+    sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
+    
+    

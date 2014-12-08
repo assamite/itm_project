@@ -141,18 +141,22 @@ def hf2bin256(encoding):
     '''Convert Huffman encoding to a binary string. That is, given encoding is 
     the mapping of symbols (integers) into code words.
     
+    Does not work if there is more than 256 values to encode.
+    
     Has some expectations of the encoding. Look the code.
     ''' 
     l = len(encoding.keys())
     lb = int(np.ceil(np.log2(max([len(e) for e in encoding.values()]))))
     s = "{:08b}".format(l)
-    #max = max([len(v) for v in encoding.values()])
+    #m = np.ceil(np.log2(np.max([len(v) for v in encoding.values()])))
+    #print lb
     items = encoding.items()
+    #print items
     for k,v in items:
-        if k < 0 or k > 255:
-            raise ValueError("k == {}".format(k))
+        #if k < 0 or k > 255:
+        #    raise ValueError("k == {}".format(k))
         s += "{:08b}".format(k) # First encode the symbol into one byte
-        s += ("{:0" + str(lb) + "b}").format(len(v))
+        s += ("{:0" + str(lb) + "b}").format(len(v)-1)
     
     for k,v in items:
         s += v

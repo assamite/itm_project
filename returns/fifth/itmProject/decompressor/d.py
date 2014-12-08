@@ -122,22 +122,24 @@ if l==4:
         cur+=e
         ret.append(cur)
     sys.stdout.write(struct.pack('1250H',*ret))
-if l==5:
+if l in [5,8]:
+    if l==5:a=5;A=80;c='2700B';C=2700
+    else:a=6;A=90;c='3200B';C=3200
     y=400
     d=[0 for r in range(y)]
     d[:2]=[1,3]
-    for t in range(2,y):          
+    for t in range(2,y):
         d[t]=d[t-1]+d[t-2]
     b=""
     for t in range(220):
-        b+='{:01b}'.format(d[t+80])
-    b+='00'
+        b+='{:01b}'.format(d[t+A])
+    if l==5:b+='00'
     s=[]
     for i in xrange(0,len(b),8):
-        e=b[i:i+8] 
-        e=e[5:]+e[:5]
+        e=b[i:i+8]
+        e=e[a:]+e[:a]
         s.append(int(e,2))
-    sys.stdout.write(struct.pack('2700B'.format(),*s[:2700]))
+    sys.stdout.write(struct.pack(c.format(),*s[:C]))
 if l==7:
     s=np.array([[float(i) for i in e.split()] for e in g.split("\n")[:-1]])
     Y=s[:,0]

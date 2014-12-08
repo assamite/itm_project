@@ -16,10 +16,10 @@
 
 <center>
 <h1>Project - De Compression Competition</h1>  
-<h2>Kalle Timperi, Simo Linkola, Teemu Pitkänen</h2>
+<h2>Simo Linkola, Teemu Pitkänen, Kalle Timperi</h2>
 </center>
 
-<h3>Description of your compression algorithm</h3>
+<h3>Description of the compression algorithm</h3>
 
 <P>
 Describe the ideas/observations/principles underlying the compressor 
@@ -51,6 +51,11 @@ conform to the <strong>runtest.sh</strong> script in the template.
     but it is nevertheless another cosine-based function. The model achieved residuals
     mostly below the order $10^2$, and we encoded them using Huffman coding for
     both the integer and decimal part separately.
+    
+    The final model was of the form 
+    $$m(x)=\left\lbrace \begin{array}  -|ax+b|\cdot(|\cos(cx)|-1)^2 +d, \;\;\;\;\;\;\;\;\; \text{ if }x<1250\\
+    (ex+f)(|cos(gx+h)+i|+j)+k, \;\;\; \text{ otherwise.} \end{array} \right.$$
+    <img src="curve1_fit.png" width="750px" height="300px"/>
 </P>
 <P><STRONG>paleo.csv</STRONG>
     The paleo.csv data contains scientific data about prehistoric ammonoids.
@@ -59,9 +64,9 @@ conform to the <strong>runtest.sh</strong> script in the template.
     ready compression tools to take advantage of. For example, attributes 10-14 
     in each record were (mostly) reproducible with simple calculations from the other values
     in the record. Our approach was to replace the complex values in these fields
-    with simpler ones that would help us reproduce the original values in the decompression
-    phase. Now, using bzip2 on this modified data yielded a much better result
-    than it did originally. 
+    with simpler ones that would be easier for the compressors, and help us reproduce
+    the original values in the decompression phase. Now, using bzip2 on this modified 
+    data yielded a much imporved result (roughly 64kB after the modification, 102kB before).
     
     For the fields which we were able to reproduce by calculations, we replaced
     the original value with the accuracy of the result in the data. The 'lobes' 
@@ -72,6 +77,12 @@ conform to the <strong>runtest.sh</strong> script in the template.
     
     Finally, the modified data was compressed one column at a time (same attribute
     in all records), so that bzip2 could better find the regularities.
-    
 </P>
+
+<P><STRONG>ty.txt</STRONG></P>
+<P><STRONG>caravan.dat</STRONG></P>
+<P><STRONG>final.dat</STRONG></P>
+<P><STRONG>group.stock.dat</STRONG></P>
+<P><STRONG>monty_python_data_1.dat & monty_python_data_2.dat</STRONG></P>
+<P><STRONG>The rest of the penalty data</STRONG></P>
 <hr>

@@ -321,3 +321,7 @@ if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
         bts.append(by) 
     
     sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
+
+
+if sys.argv[1][-len('monty_python_data_2.dat'):] == 'monty_python_data_2.dat':
+    sys.stdout.write(struct.pack('B',8))

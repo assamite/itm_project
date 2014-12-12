@@ -298,6 +298,7 @@ if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
     #        print d
             
     sdres = reduce(lambda x,y: x + y, dres, "")
+    #open('final.dres', 'w').write(sdres)
     #print len(sdres)
     hf, enc = utils.str2encode(sdres)
     #print len(hf) / 8.0

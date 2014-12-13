@@ -1,5 +1,5 @@
-Curve1.dat and Ty.txt
-=====================
+``curve1.dat`` and ``ty.txt`` 
+=============================
 
 
 Model

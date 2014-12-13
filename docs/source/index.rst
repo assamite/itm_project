@@ -12,6 +12,7 @@ Project in Information-Theoretic Modeling
    :hidden:
    
    group
+   general
    base_data/index
    penalty_data/index
    
@@ -20,9 +21,10 @@ This documentation covers the compression methods and bit-juggling done during
 the course **Project in Information-Theoretic Modeling** held at University of 
 Helsinki's Department of Computer Science in fall 2014.
 
-The documentation is split into three parts:
+The documentation is split into parts:
 
 	* :doc:`group` contains information about the group and work done by each individual during the course
+	* :doc:`general` contains information of compression and decompression methods as a whole.
 	* :doc:`base_data/index` covers the files given by the course staff
 	* :doc:`penalty_data/index` covers the files submitted by the groups taking the course 
 	

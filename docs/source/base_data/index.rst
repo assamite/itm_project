@@ -1,13 +1,11 @@
 Default Data Files
 ==================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
+   :hidden:
    
-   curve1
-   ty
+   ty_curve1
    paleo
    caravan
    final

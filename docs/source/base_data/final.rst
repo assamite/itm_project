@@ -2,19 +2,19 @@
 =============
 
 This data consists of data file ``final.dat`` and side information file ``final.sdat``.
-Data consists of 20000 floating point numbers seprated by new lines and side 
-information contains two floating point numbers for each line in data. Data and
-side information was grouped line by line to form data points in three dimensional
-model :math:`(X,Y,Z)`. Each data point is then a 3-tuple 
+Data file has 20000 floating point numbers separated by new lines and side 
+information contains two floating point numbers for each line in data file. Data and
+side information was grouped line by line to form a three dimensional
+space :math:`(X,Y,Z)`. Each data point is then a 3-tuple 
 :math:`(x, y, z)`, where :math:`x` contains data to compress and :math:`y` and :math:`z` the 
 two side information columns. For closer inspection, the data was plotted in 3D 
-space as is seen in Figure 2.
+space as is seen in Figure 1.
 
 .. _final_1:
 
 .. figure:: figures/final_1.png
 
-	Figure 1. Data and side information plotted in 3D space.
+	Figure 1. Data (:math:`X`) and side information (:math:`Y`, :math:`Z`) plotted in 3D space.
 	
 	
 When inspecting the Figure 1., we can see that the data seems to have two shapes in it; with
@@ -24,7 +24,7 @@ divided by the rip in the shape around :math:`z = 0.5`.
 We first tried to fit single plane on the data, but the basic polynomial fitting functions 
 could not handle the sharp curve around the maximum of :math:`Z`-dimension. This lead 
 us to an idea to divide the data into two sets using a plane. For optimal dividing 
-plane, we fitted a curve on the data points around the maximum of :math:`Z`-dimension 
+plane, we fitted a curve on the data points near the maximum of :math:`Z`-dimension 
 (threshold :math:`0.05`), which can be seen in Figure 2. Using this curve we can
 obtain a plane in Figure 3. and split the data into two sets depending if the
 point is under or above the plane.
@@ -34,7 +34,7 @@ point is under or above the plane.
 
 .. figure:: figures/final_curve.png	
 
-	Figure 2. Curve fitted to points near the maximum of Z.
+	Figure 2. Curve fitted to data points near the maximum of :math:`Z`.
 	
 	
 .. _final_1plane
@@ -46,9 +46,14 @@ point is under or above the plane.
 Once data was divided, it was easy to fit a single plane into both of the sets
 using polynomials found from Matlab's curve fitting tool. We used polynomials
 of order 5 (probably order 3 would have been sufficient and 
-saved some decompressor size because of fewer coefficients). The obtained 
-planes can be seen in Figure 4. and 6. and the residuals between the planes and 
-the data points in Figure 5. and 7.
+saved some decompressor size because of fewer coefficients), i.e.
+
+.. math:: x = c_1 + c_2y + c_3z + c_4y^2 + c_5yz + c_6z^2 + \dots + c_{19}y^2z^3 + c_{20}yz^4 + c_{21}z^5 .
+ 
+
+The obtained 
+planes can be seen in Figure 4. and Figure 6., and the residuals between the planes and 
+the data points in Figure 5. and Figure 7.
 	
 	
 .. _final_split0_plane
@@ -87,13 +92,14 @@ residual's decimal part was handled separately.
 
 For (a) we used ``+`` and ``-`` to mark plane models above and below the dividing plane,
 respectively, and concatenated this information with the sign (also ``+`` and ``-``) and 
-the integer part of the residual. With this procedure we obtained strings like ``+-1`` or ``-+0``.
+the integer part of the residual. With this procedure we obtained strings like ``+-1`` or ``-+0`` for each residual.
 These strings were then used as individual symbols for Huffman code generation.
 
 For (b) we observed, that the original data was given with floating point precision
 at most 3. This leads to the fact that storing 3 digits of residual decimals will
 be sufficient to obtain any of the original data points when combined with the 
-plane model used to obtain the residual. We rounded each residual's decimal part to a floating point precision 3 and concatenated
+plane model used in calculating the residual. We rounded each residual's decimal 
+part to a fixed floating point precision 3 and concatenated
 the results as a string, which yielded us a string of length 60000. This string
 was then Huffman coded using each character, i.e. digits from 0 to 9, as individual symbol.
 

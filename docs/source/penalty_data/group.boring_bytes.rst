@@ -1,4 +1,4 @@
 ``group.boring_bytes.dat``
 ==========================
 
-This file is passed as is through the compressor using ``cat``-command.
+This file was passed as is through the compressor using :command:`cat`.

@@ -27,12 +27,3 @@ The documentation is split into parts:
 	* :doc:`general` contains information of compression and decompression methods as a whole.
 	* :doc:`base_data/index` covers the files given by the course staff
 	* :doc:`penalty_data/index` covers the files submitted by the groups taking the course 
-	
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

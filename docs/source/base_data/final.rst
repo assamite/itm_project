@@ -8,7 +8,8 @@ side information was grouped line by line to form a three dimensional
 space :math:`(X,Y,Z)`. Each data point is then a 3-tuple 
 :math:`(x, y, z)`, where :math:`x` contains data to compress and :math:`y` and :math:`z` the 
 two side information columns. For closer inspection, the data was plotted in 3D 
-space as is seen in Figure 1.
+space as is seen in Figure 1. When inspecting the figure, we can see that the 
+data seems to have two distinct shapes, or planes, in it. 
 
 .. _final_1:
 
@@ -16,10 +17,12 @@ space as is seen in Figure 1.
 
 	Figure 1. Data (:math:`X`) and side information (:math:`Y`, :math:`Z`) plotted in 3D space.
 	
-	
-When inspecting the Figure 1., we can see that the data seems to have two shapes in it; with
-a small side question if the upper shape should be modeled as two shapes in itself,
-divided by the rip in the shape around :math:`z = 0.5`.
+.. note::
+
+	There is a small side question if the upper shape should be modeled as two shapes in itself,
+	divided by the rip in the shape around :math:`z = 0.5`; or if the lower plane 
+	actually starts from the rip and is somehow mirrored with respect to
+	:math:`Z`-axis.
 
 We first tried to fit single plane on the data, but the basic polynomial fitting functions 
 could not handle the sharp curve around the maximum of :math:`Z`-dimension. This lead 
@@ -103,6 +106,6 @@ part to a fixed floating point precision 3 and concatenated
 the results as a string, which yielded us a string of length 60000. This string
 was then Huffman coded using each character, i.e. digits from 0 to 9, as individual symbol.
 
-Finally we added the information of the (symbol, Huffman code) -mappings into the start 
+Finally we added the information of the (symbol, code) -mappings (see :ref:`huffman` for details) into the start 
 of both parts (a) and (b) and concatenated the results to obtain the compressed 
 binary file.

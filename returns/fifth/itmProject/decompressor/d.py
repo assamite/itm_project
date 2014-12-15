@@ -41,7 +41,17 @@ def h(b,a,r,d,w,q):
 def c(r,a,p):
     i=[float(x+y+"."+z) for x,y,z in zip(["-"if x=='0'else''for x in b[:a]],map(lambda x:str(r[int("".join(x),2)]),zip(*[iter(b[a:a*9])]*8)),map(lambda x:"{:02d}".format(int("".join(x),2)),zip(*[iter(b[a*9:])]*7)))]
     n=t(a)
-    return ["{:.2f}".format(round(m(n[x],x,*p),2)+a) for x,a in enumerate(i)]  
+    return ["{:.2f}".format(round(m(n[x],x,*p),2)+a) for x,a in enumerate(i)]
+def u(r):
+    z=len(r)
+    e=len(r[0])
+    C=['' for d in range(z)]
+    for t in range(z):
+        for d in range(e):
+            C[t]=C[t]+str(ord(r[t][d])-65)
+            if (d<e-1):
+                C[t]=C[t]+','
+    return C
 if l==1:
     p=[-1.08,1363,1.0/60,15,1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2.64,1.0]
     r=range(256)

@@ -47,14 +47,14 @@ based on e.g. Huffman coding.
 ``curve1.dat``
 **************
 
-As ``curve1.dat`` contained only 2000 data points, the first experiments showed
+As ``curve1.dat`` contained only :math:`2000` data points, the first experiments showed
 that its size was impossible (to our knowledge) to  compress below the size 
 of :command:`bzip2`-file with Huffman coding or similar techniques. However,
-we saw that given our fitted model, there residual's absolute integer values
+we saw that given our fitted model, the residual's absolute integer values
 were restricted to a set which was less than :math:`2^8`, this lead to an 
 encoding, where we first encoded the signs of the residuals (:math:`2000` bits), then 
 the integer value (:math:`8 \cdot 2000` bits) and then the decimal parts (:math:`7 \cdot 2000` bits), and
-simply concatenated these into 4000 bytes. In Figure 1. we can see the data and the
+simply concatenated these into :math:`4000` bytes. In Figure 1. we can see the data and the
 fitted curve, and in Figure 2. the residuals with respect to the curve.
 
 .. figure:: figures/curve1_fit.png
@@ -115,5 +115,5 @@ encode the (symbol, code) -mappings as explained in :ref:`huffman`). Figures 3.,
 	each data point was more than the gain in generated Huffman code length.
 	
 	
-The compressed file was then constructed by simply concatenating the each residual's sign (10,000 bits),
+The compressed file was then constructed by simply concatenating the each residual's sign (:math:`10,000` bits),
 Huffman encoding, Huffman coded absolute integer values, and Huffman coded decimal parts.

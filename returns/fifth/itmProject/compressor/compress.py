@@ -339,7 +339,7 @@ if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
 if sys.argv[1][-len('monty_python_data_2.dat'):] == 'monty_python_data_2.dat':
     sys.stdout.write(struct.pack('B',8))
 
-if sys.argv[1][-len('caravan.dat'):] == 'caravan.dat':
+if sys.argv[2][-len('caravan.dat'):] == 'caravan.dat':
     data = [d.replace('\t',',') for d in open(sys.argv[1]).read().split("\n")[:-1]]
     rowLength = len(data[0].split(','))
     entr = [float(t) for t in utils.entropyCols(data)]

@@ -8,6 +8,15 @@ b=reduce(lambda x,y:x+'{:08b}'.format(y),struct.unpack('{}B'.format(len(f)),f),"
 l=int(b[:8],2)
 b=b[8:]
 t=lambda x:np.linspace(0,1999,x)
+def u(r,s=','):
+    R=len(r[0])
+    n=['' for t in range(len(r))]
+    for t in range(len(r)):
+        for d in range(R):
+            n[t]=n[t]+str(ord(r[t][d])-65)
+            if (d<R-1):
+                n[t]=n[t]+s
+    return n
 def m(n,y,a,b,c,d,e,f,g,h,i,j,k,x):
     if(y<1250*x):
         return (-1*np.abs(a*n+b))*(np.abs(np.cos(c*n))-1)**2+d

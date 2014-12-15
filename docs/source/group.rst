@@ -9,7 +9,7 @@ The group for the project was Simo Linkola, Teemu Pitkänen and Kalle Timperi. W
 	curve1.dat              All				Simo
 	paleo.csv				Teemu			Teemu
 	ty.txt                  Simo, Teemu		Simo
-	caravan.dat				Kalle			Kalle
+	caravan.dat				Kalle			Kalle, Teemu
 	final.dat               Simo, Kalle		Simo
 	bucket.1.dat			\-				*used cat*
 	bucket.2.dat			\-				*used cat*

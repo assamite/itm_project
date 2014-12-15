@@ -81,7 +81,7 @@ if sys.argv[1][-len('curve1.dat'):] == 'curve1.dat':
     sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
     
 
-if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
+elif sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     orig = np.array([float(i.strip()) for i in open(sys.argv[1]).read().split()])
     ran = np.linspace(0,1999,num=10000)
     p = [-1.08589, 1365.49, 0.016679, 58.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,51.668242,5]
@@ -140,7 +140,7 @@ if sys.argv[1][-len('ty.txt'):] == 'ty.txt':
     sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
     
 
-if sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
+elif sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
     stock = struct.unpack('1250H', open(sys.argv[1]).read())
     diffs = [stock[0]]
     for i,s in enumerate(stock[1:]):
@@ -149,7 +149,7 @@ if sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
     bts = [ids['group.stock.dat']] + bts
     sys.stdout.write(struct.pack('{}B'.format(len(bts)), *bts))
 
-if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
+elif sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
     data=open(sys.argv[1]).read().split("\n")[:-1]
     strings=['','','','','','','','','','']
     strings[9]+=data[0]
@@ -252,12 +252,12 @@ if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
     sys.stdout.write(bits)
 
 
-if sys.argv[1][-len('monty_python_data_1.dat'):] == 'monty_python_data_1.dat':
+elif sys.argv[1][-len('monty_python_data_1.dat'):] == 'monty_python_data_1.dat':
     b = "{:08b}".format(ids['monty_python_data_1.dat'])
     bts = [int(b, 2)]
     sys.stdout.write(struct.pack('1B', *bts))
 
-if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
+elif sys.argv[1][-len('final.sdat'):] == 'final.sdat':
     a=np.array([[float(i) for i in e.split()] for e in open(sys.argv[1]).read().split("\n")[:-1]])
     Y=a[:,0]
     Z=a[:,1]
@@ -336,11 +336,11 @@ if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
     sys.stdout.write(struct.pack('{}B'.format(len(bts)),*bts))
 
 
-if sys.argv[1][-len('monty_python_data_2.dat'):] == 'monty_python_data_2.dat':
+elif sys.argv[1][-len('monty_python_data_2.dat'):] == 'monty_python_data_2.dat':
     sys.stdout.write(struct.pack('B',8))
 
-if sys.argv[1][-len('caravan.dat'):] == 'caravan.dat':
-    data = [d.replace('\t',',') for d in open(sys.argv[1]).read().split("\n")[:-1]]
+elif sys.argv[2][-len('caravan.dat'):] == 'caravan.dat':
+    data = [d.replace('\t',',') for d in open(sys.argv[2]).read().split("\n")[:-1]]
     rowLength = len(data[0].split(','))
     entr = [float(t) for t in utils.entropyCols(data)]
     

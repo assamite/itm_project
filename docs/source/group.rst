@@ -6,16 +6,16 @@ The group for the project was Simo Linkola, Teemu Pitkänen and Kalle Timperi. W
 	=======================	===============	===================
 	File                    Modeling		Implementation
 	=======================	===============	===================
-	curve1.dat              All				Simo
-	paleo.csv				Teemu			Teemu
+	curve1.dat              Teemu			Teemu, Simo
+	paleo.csv               Teemu			Teemu
 	ty.txt                  Simo, Teemu		Simo
-	caravan.dat				Kalle			Kalle, Teemu
+	caravan.dat		Kalle			Kalle, Teemu
 	final.dat               Simo, Kalle		Simo
-	bucket.1.dat			\-				*used cat*
-	bucket.2.dat			\-				*used cat*
-	bucket.3.dat			\-				*used cat*
+	bucket.1.dat		\-			*used cat*
+	bucket.2.dat		\-			*used cat*
+	bucket.3.dat		\-			*used cat*
 	group.stock.dat	        Simo			Simo
-	group.boring_bytes.dat	\-				*used cat*
+	group.boring_bytes.dat	\-			*used cat*
 	monty_python_data_1.dat	Kalle			Simo, Kalle
 	monty_python_data_2.dat	Kalle			Teemu, Kalle				
 	=======================	=============== ===================

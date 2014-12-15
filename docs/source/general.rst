@@ -90,4 +90,6 @@ Now, in the case of repetitions of the same symbols, all of them except the firs
 
 Huffman coding
 **************
-The final squeezing from symbol level to single bits happens by Huffman coding, mainly as described before. Some additional techniques such as multiple Huffman tables etc can also be used. Finally, the Huffman coding itself is encoded with delta encoding.
+The final squeezing from symbol level to single bits happens by Huffman coding, mainly as described before. 
+Some additional techniques such as multiple Huffman tables, etc., can also be used. Finally, the Huffman coding 
+itself is encoded with delta encoding.

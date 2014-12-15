@@ -33,20 +33,35 @@ def fun(x, a, b, c, d, e, f, g, h, i, j, k,m):
 ran = np.linspace(0,1999,num=10000)
 print ran[:10]
 #p = [-1.08, 1363, 1.0/60, 15, 1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2.64, 1]
-p = [-1.08589, 1365.49, 0.016679, 64.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,57.668242,5]
+p = [-1.08589, 1365.49, 0.016679, 58.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,51.668242,5]
 #popt, popcov = curve_fit(fun, ran, data, p0 = p)
 
 # Plot data, the fitted function and the difference
 y=fun(ran,*p)
-plt.plot(data)
-plt.plot(y);
+plt.plot(data, '.', color = 'black', ms = 2, label = 'data points')
+plt.plot(y, color = 'red', label = 'fitted curve');
 #plt.plot(data-y)
+#plt.ylim((-1200, 600))
+plt.ylabel('value')
+plt.xlabel('index')
+plt.legend(loc = 0)
 plt.show()
 #np.savetxt("optimal_params_all",popt,"%f")
 
 estimates = y
 estimates = [round(x,2) for x in estimates]
 residuals = np.array(data)-np.array(estimates)
+plt.plot(residuals, '.', color = 'black', ms = 2, label = 'residuals')
+#plt.plot(y, color = 'red', label = 'fitted curve');
+#plt.plot(data-y)
+plt.ylim((-300, 300))
+plt.ylabel('value')
+plt.xlabel('index')
+plt.legend(loc = 0)
+plt.show()
+#np.savetxt
+
+
 #enc,bts,add=utils.nums2bin(residuals)
 #print len(bts), add, enc
-np.savetxt("curve1_res",residuals,"%.2f")
+#np.savetxt("curve1_res",residuals,"%.2f")

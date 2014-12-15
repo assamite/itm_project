@@ -7,7 +7,9 @@ information contains two floating point numbers for each line in data file. Data
 side information was grouped line by line to form a three dimensional
 space :math:`(X,Y,Z)`. Each data point is then a 3-tuple 
 :math:`(x, y, z)`, where :math:`x` contains data to compress and :math:`y` and :math:`z` the 
-two side information columns. For closer inspection, the data was plotted in 3D 
+two side information columns. 
+
+For closer inspection, the data was plotted in 3D 
 space as is seen in Figure 1. When inspecting the figure, we can see that the 
 data seems to have two distinct shapes, or planes, in it. 
 
@@ -15,7 +17,7 @@ data seems to have two distinct shapes, or planes, in it.
 
 .. figure:: figures/final_1.png
 
-	Figure 1. Data (:math:`X`) and side information (:math:`Y`, :math:`Z`) plotted in 3D space.
+	Figure 1. Data (:math:`\,X\,`) and side information (:math:`\,Y,Z\,`) plotted in 3D space.
 	
 .. note::
 
@@ -29,7 +31,7 @@ could not handle the sharp curve around the maximum of :math:`Z`-dimension. This
 us to an idea to divide the data into two sets using a plane. For optimal dividing 
 plane, we fitted a curve on the data points near the maximum of :math:`Z`-dimension 
 (threshold :math:`0.05`), which can be seen in Figure 2. Using this curve we can
-obtain a plane in Figure 3. and split the data into two sets depending if the
+obtain a plane in Figure 3., and split the data into two sets depending if the
 point is under or above the plane.
 	
 
@@ -101,7 +103,7 @@ These strings were then used as individual symbols for Huffman code generation.
 For (b) we observed, that the original data was given with floating point precision
 at most 3. This leads to the fact that storing 3 digits of residual decimals will
 be sufficient to obtain any of the original data points when combined with the 
-plane model used in calculating the residual. We rounded each residual's decimal 
+plane model used in calculating the residual -- given the side information. We rounded each residual's decimal 
 part to a fixed floating point precision 3 and concatenated
 the results as a string, which yielded us a string of length 60000. This string
 was then Huffman coded using each character, i.e. digits from 0 to 9, as individual symbol.
@@ -109,3 +111,4 @@ was then Huffman coded using each character, i.e. digits from 0 to 9, as individ
 Finally we added the information of the (symbol, code) -mappings (see :ref:`huffman` for details) into the start 
 of both parts (a) and (b) and concatenated the results to obtain the compressed 
 binary file.
+

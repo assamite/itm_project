@@ -68,4 +68,26 @@ information added to the binary), and add the information to the appropriate par
 bzip2
 ---------
 
-Information about bzip2
+bzip2 is an open source compression program, that consists of several transformations to the input data. It is a file compressor, so it cannot be used to compress directories on its own. The most important subroutines it uses are:
+
+Run-length encoding
+*******************
+bzip2 actually applies run-length encoding twice, but the idea in both implementations is the same: replace long repeats of a symbol with the symbol and amount of repeats. For example, in the first stage it replaces sequences of 4 to 255 identical symbols with four times the symbol and then the number of remaining repeats, e.g. ’AAAA\\5’ instead of ’AAAAAAAAA’.
+
+
+Burrows-Wheeler transformation
+******************************
+The Burrows-Wheeler transformation is a method, that on it’s own doesn’t do any compression, but makes the data easier to compress for other tools (such as run-length encoding) by sorting the data so that identical symbols appear consecutively. This is done by rotating the original data, ordering it in numerical order, and storing the pointers needed to figure out the original ordering in the decompression phase.
+
+Move to front
+*************
+Move to front is another non-compressing transformation. When a new block is to be processed, all the symbols that it contains are placed in a table. Now, processing a single symbol consists of two phases:
+	
+	1. Replace the symbol with its index in the symbol table
+	2. Move the symbol to the beginning (front) of the array
+
+Now, in the case of repetitions of the same symbols, all of them except the first are replaced with symbol ’0’, so now only the first symbols of such sequences are other symbols. Furthermore, symbols that appear often get small numbers, because they do not ’sink too deep’ in the array before appearing again. Also, the symbols representing small numbers like ’1’ and ’2’ are frequent in the output of the transformation, and they are also likely to happen consecutively in the output, increasing the efficiency of the actual compression methods.
+
+Huffman coding
+**************
+The final squeezing from symbol level to single bits happens by Huffman coding, mainly as described before. Some additional techniques such as multiple Huffman tables etc can also be used. Finally, the Huffman coding itself is encoded with delta encoding.

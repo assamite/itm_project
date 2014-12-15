@@ -4,6 +4,7 @@ from collections import Counter
 from heapq import heappush, heappop, heapify
 from struct import pack, unpack
 import numpy as np
+import math
 import re
 
 def count_chars(s):

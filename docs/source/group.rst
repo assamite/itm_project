@@ -9,7 +9,7 @@ Group members took part in the following areas during the course:
 	=======================	===============	===================
 	curve1.dat              Teemu, Simo		Simo
 	paleo.csv		Teemu			Teemu
-	ty.txt                  Simo			Simo
+	ty.txt                  Simo, Teemu		Simo
 	caravan.dat		Kalle			Kalle
 	final.dat               Simo			Simo
 	bucket.1.dat		\-			*used cat*

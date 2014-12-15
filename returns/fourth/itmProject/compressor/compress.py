@@ -135,8 +135,8 @@ if sys.argv[1][-len('group.stock.dat'):] == 'group.stock.dat':
 
 if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
     data=open(sys.argv[1]).read().split("\n")[:-1]
-    strings=['','','','','','','','','','','','','','','']
-    strings[14]+=data[0]
+    strings=['','','','','','','','','','']
+    strings[9]+=data[0]
     data = [x.replace(",",".") for x in data[1:]]
     previouslobes=0
     for i in range(len(data)):
@@ -152,22 +152,28 @@ if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
         except: dm=''
         if record[2] == dm:strings[2] += 'a'
         else: strings[2] += record[2]
+        strings[2]+=';'
 
         # Fields dm, ww, wh, uw, ah - no specific implementation yet
-        for j in range(3,8):
-            strings[j] += record[j]
+        strings[3] += record[3]
+        strings[5] += record[6]
+        strings[6] += record[7]
+
+        # Fields ww and wh contain similar values, the compression performs better if we bzip them together
+        strings[4] += record[4]+';'
+        strings[4] += record[5]
 
         # Field lobes - Replace values that equal that of the previous record with marker 'a'. Otherwise original values.
-        if record[8] == previouslobes: strings[8] += 'a'
+        if record[8] == previouslobes: strings[7] += 'a'
         else:
-            strings[8] += record[8]
+            strings[7] += record[8]
             previouslobes = record[8]
 
         # Field maxdm(2) - Replace values that equal ceil(dm) with marker 'a', and those that equal maxdm(1) with marker
-        # 'b'. Otherwise original values.
-        if record[9] == dm: strings[9] += 'a'
-        elif record[9] == record[2]: strings[9] += 'b'
-        else: strings[9] += record[9]
+        # 'b'. Otherwise original values. These are bzipped together with maxdm(1).
+        if record[9] == dm: strings[2] += 'a'
+        elif record[9] == record[2]: strings[2] += 'b'
+        else: strings[2] += record[9]
 
         # Fields ww/dm, ww/wh, uw/dm, WER ((dm/(dm-ah)^2) - Values replaced as follows:
         # Integer value 0-9:    The accuracy of the field (the length of the decimal part), if
@@ -177,38 +183,44 @@ if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
         # Original value:       Otherwise (field contains some value, but it seems arbitrary)
 
         for j in range(10,14):
-            if record[j] == '': strings[j] += 'a'
-            elif record[j] == '#DIV/0!': strings[j] += 'b'
+            if record[j] == '':
+                strings[8]+='a'
+                if j!=13:strings[8]+=';'
+            elif record[j] == '#DIV/0!':
+                strings[8]+='b'
+                if j!=13:strings[8]+=';'
             else:
                 try: accuracy = len(record[j].split(".")[1])
                 except: accuracy = 0
                 if j==10:
                     try:
                         if float(record[10]) == round(float(record[4])/float(record[3]),accuracy):
-                            strings[j] += str(accuracy)
-                        else: strings[j] += record[10]
-                    except: strings[j] += record[10]
-
+                            strings[8] += str(accuracy)
+                        else: strings[8] += record[10]
+                    except: strings[8] += record[10]
+                    strings[8]+=';'
                 elif j==11:
                     try:
                         if float(record[11]) == round(float(record[4])/float(record[5]),accuracy):
-                            strings[j] += str(accuracy)
-                        else: strings[j] += record[11]
-                    except: strings[j] += record[11]
+                            strings[8] += str(accuracy)
+                        else: strings[8] += record[11]
+                    except: strings[8] += record[11]
+                    strings[8]+=';'
                 elif j==12:
                     try:
                         if float(record[12]) == round(float(record[6])/float(record[3]),accuracy):
-                            strings[j] += str(accuracy)
+                            strings[8] += str(accuracy)
                         else:
-                            strings[j] += record[12]
+                            strings[8] += record[12]
                     except:
-                        strings[j] += record[12]
+                        strings[8] += record[12]
+                    strings[8]+=';'
                 elif j==13:
                     try:
                         if float(record[13]) == round((float(record[3])/(float(record[3])-float(record[7])))**2,accuracy):
-                            strings[j] += str(accuracy)
-                        else: strings[j] += record[13]
-                    except: strings[j] += record[13]
+                            strings[8] += str(accuracy)
+                        else: strings[8] += record[13]
+                    except: strings[8] += record[13]
 
 
         # Adding delimiters between values
@@ -216,7 +228,7 @@ if sys.argv[1][-len('paleo.csv'):] == 'paleo.csv':
             strings[j] += ';'
 
     # Compress column by column with bzip2 and concatenate the resulting bitstrings
-    bits=bz2.compress(strings[14])
+    bits=bz2.compress(strings[9])
     for x in range(len(strings))[:-1]:
         bit = bz2.compress(strings[x])
         bits += bit

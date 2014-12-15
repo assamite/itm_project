@@ -185,11 +185,8 @@ def bin2562hf(binstring,add):
         encs.append(b[:lengths[i]])
         b = b[lengths[i]:]
     return chars,encs
-        
-    
-    
-    
-    
+
+
 def _encode2dict(enc):
     d ={}
     for e in enc:
@@ -210,3 +207,245 @@ def encode(symb2freq):
             pair[1] = '1' + pair[1]
         heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
     return sorted(heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+
+
+ # The following added for caravan.dat:
+
+def readCol(rowData, col, sep = ','):
+    ''' Reads the specified column from multicolumn string data and returns it as a list.
+      col = 'index of the desired column', sep = 'separator'. '''
+
+    return [rowData[l].split(sep)[col] for l in range(len(rowData))]
+    
+
+def writeList(rowData, fileName):
+    ''' Concatenates the elements of a string list as a single string and writes it on the hard drive. '''
+    
+    outList = ''
+    for d in range(len(rowData)):
+        outList = outList + str(rowData[d])
+        if (d < len(rowData) - 1):
+            outList = outList + '\n'
+    fil = open(fileName, 'w')
+    fil.write(outList)
+    
+def parseString(rowData, sep = '\n'):
+    ''' Concatenates the elements of a list as a single string and returns it. '''
+    outList = ''
+    for d in range(len(rowData)):
+        outList = outList + str(rowData[d])
+        if (d < len(rowData) - 1):
+            outList = outList + sep
+    return outList
+    
+def codeCols(rowData, cols, sep = ','):
+    ''' Constructs a Huffman coding for the given columns of a multicolumn data.
+    Variable cols contains a list of the desired columns. Returns the encoded columns as
+    a list of binary strings and a list containg all the corresponding encodings. '''
+    
+    bitit = [0 for d in range(len(cols))]
+    koodit = [0 for d in range(len(cols))]
+
+    for d in range(len(cols)):
+        bitit[d], koodit[d] = digits2encode(readCol(rowData, cols[d]), unsign = True)
+        
+    return bitit, koodit
+    
+def chooseCols(rowData, cols, sep = ','):
+    ''' Returns a list of strings that represent only a subset
+    of the columns that the original rowData does. Variable cols
+    contains a list of the desired columns. '''
+    
+    newRows = ['' for d in range(len(rowData))]
+    newCols = ['' for d in range(len(cols))]
+    
+    for d in range(len(cols)):
+        newCols[d] = readCol(rowData, cols[d], sep)
+
+    for l in range(len(rowData)):
+        #cols = [0 for k in range(len(cols))]
+        
+        for d in range(len(cols)):
+            newRows[l] = newRows[l] + newCols[d][l]
+            if (d < len(cols) - 1):
+                newRows[l] = newRows[l] + ','
+    
+    return newRows
+
+def mergeCols(colData1, colData2, cols1, sep = ','):
+    ''' Merge two lists of column data into one.
+    The list cols1 has to be ordered, otherwise this will not work. '''
+    
+    rowLength = len(colData1[0].split(sep)) + len(colData2[0].split(sep))
+    newCols = ['' for t in range(len(colData1))]
+    for t in range(len(newCols)):
+        index = 0
+        col1 = colData1[t].split(sep)
+        col2 = colData2[t].split(sep)
+        
+        for n in range(rowLength):
+            if (n == cols1[index]):
+                newCols[t] = newCols[t] + col1[index]
+                index += 1
+            else:
+                newCols[t] = newCols[t] + col2[n - index]
+            if (n < rowLength - 1):
+                newCols[t] = newCols[t] + ','
+    return newCols 
+    
+def entropyCols(rowData, sep = ','):
+    rowLength = len(rowData[0].split(sep))
+    ent = [0 for d in range(rowLength)]
+    
+    for d in range(rowLength):
+        en = 0
+        col = [int(l) for l in readCol(rowData, d, sep)]
+        laskuri = Counter(col)
+        freq = [laskuri.values()[t] for t in range(len(laskuri))]
+        
+        for l in range(len(freq)):
+            en = en + (freq[l] * (math.log(len(rowData), 2) - math.log(freq[l], 2)))
+            
+        ent[d] = "{0:.06f}".format((1.0 * en) / len(rowData))
+    
+    return ent
+    
+def entCol(rowData, col, sep = ','):
+    
+    en = 0
+    col = [int(l) for l in readCol(rowData, col, sep)]
+    laskuri = Counter(col)
+    freq = [laskuri.values()[d] for d in range(len(laskuri))]
+        
+    for l in range(len(freq)):
+        en = en + (freq[l] * (math.log(len(rowData), 2) - math.log(freq[l], 2)))
+    
+    return (1.0 * en) / len(rowData)
+
+def jointEntCols(rowData, cols, sep = ','):
+    ''' Gives the joint entropy of two columns '''
+    
+    en = 0
+    col = [[] for d in range(len(cols))]
+    comb = ['' for t in range(len(rowData))]
+    
+    for d in range(len(cols)):
+        col[d] = [l for l in readCol(rowData, cols[d], sep)]
+        
+    for t in range(len(rowData)):
+        for d in range(len(cols)):
+            comb[t] = comb[t] + col[d][t]
+            
+    laskuri = Counter(comb)
+    freq = [laskuri.values()[d] for d in range(len(laskuri))]
+        
+    for l in range(len(freq)):
+        en = en + (freq[l] * (math.log(len(rowData), 2) - math.log(freq[l], 2)))
+            
+    return (1.0 * en) / len(rowData)
+    
+def mutualInfo(rowData, cols, sep = ','):
+    ent = [entCol(rowData, cols[t], sep) for t in range(2)]
+    joint = jointEntCols(rowData, cols, sep)
+    return ent[0] + ent[1] - joint
+    
+def mutualInfo2(rowData, cols, ents, sep = ','):
+    ''' Calculates the mutual information. The individual entropies are given in the variable ents. '''
+    
+    joint = jointEntCols(rowData, cols, sep)
+    return ents[0] + ents[1] - joint
+    
+def mutualInfoNorm(rowData, cols, ents, sep = ','):
+    joint = jointEntCols(rowData, cols, sep)
+    m = max(ents[0], ents[1])
+    if (m == 0):
+        return 0
+    return (ents[0] + ents[1] - joint) / m
+
+
+def getHist(rowData, col, sep = ','):
+    co = [int(r) for r in readCol(f, col)]
+    num_bins = len(Counter(co))
+    n, bins, patches = plt.hist(co, num_bins, normed=0, facecolor='green', alpha=0.5)
+    plt.xlabel('Value')
+    plt.ylabel('Freq')
+    plt.title(r'Histogram of values in column #' + ' ' + str(col) + ':' )
+    plt.show()
+    
+def writeBinary(binary, fileName):
+    if len(binary) % 8 != 8 and len(binary) % 8 != 0:    # Fixing the length to be divisible by 8
+    
+        for x in xrange(8 - (len(binary) % 8)):
+            binary += '0'
+
+    bts = []
+    for i in xrange(0, len(binary), 8):
+        bit = binary[i:i+8]    
+        by = int(bit, 2)  
+        bts.append(by)
+
+    fil = open(fileName, 'w')
+    fil.write(pack('{}B'.format(len(bts)),*bts)) 
+    
+def charEncodeCols(rowData, sep = ','):
+    rowLength = len(rowData[0].split(sep))
+    newCols = ['' for t in range(len(rowData))]
+    for t in range(len(rowData)):
+        row = [int(d) for d in rowData[t].split(sep)]
+        for d in range(rowLength):
+            newCols[t] = newCols[t] + str(unichr(65 + row[d]))
+    return newCols
+
+def charUncodeCols(rowData, sep = ','):
+    rowLength = len(rowData[0])
+    newCols = ['' for t in range(len(rowData))]
+    for t in range(len(rowData)):
+        # row = [int(d) for d in rowData[t].split(sep)]
+        for d in range(rowLength):
+            newCols[t] = newCols[t] + str(ord(rowData[t][d]) - 65)
+            if (d < rowLength - 1):
+                newCols[t] = newCols[t] + sep
+    return newCols
+
+
+def writeZip(data, fileName):
+    output = bz2.BZ2File(fileName + '.bz2', 'wb')
+    try:
+        output.write(data)
+    finally:
+        output.close()
+    
+def openZip(fileName):
+    input_file = bz2.BZ2File(fileName + '.bz2', 'rb')
+    try:
+        a = input_file.read()
+    finally:
+        input_file.close()
+    return a
+    
+def openCaravan(fileName, n, zipped = True):
+    input_file = bz2.BZ2File(fileName + '.bz2', 'rb')
+    try:
+        a = input_file.read()
+    finally:
+        input_file.close()
+    
+    lengths = [0 for t in range(n)]
+    parts = ['' for t in range(n)]
+    
+    temp = a[:200].split('_')
+    temp = [int(d) for d in temp[:n]]
+    index = 0
+    
+    for t in range(n):   # calculating the lengths of the parts
+        lengths[t] = temp[t]
+        index += len(str(temp[t])) + 1
+    
+    for t in range(n):   # reading in the parts
+        if zipped:
+            parts[t] = bz2.decompress(a[index : index + lengths[t]])
+        else:
+            parts[t] = a[index : index + lengths[t]]
+        index += lengths[t]
+
+    return parts

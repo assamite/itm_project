@@ -35,7 +35,7 @@ popt, popcov = curve_fit(fun, ran, data, p0 = quessed_params)
 
 # Plot data, the fitted function and the difference
 y=fun(ran,*popt)
-plt.plot(data,'b.')
+plt.plot(data,'b.',markersize=2.0)
 plt.plot(y,'r-',linewidth=2.0);
 #plt.plot(data-y)
 plt.show()

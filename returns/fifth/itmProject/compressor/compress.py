@@ -338,3 +338,31 @@ if sys.argv[1][-len('final.sdat'):] == 'final.sdat':
 
 if sys.argv[1][-len('monty_python_data_2.dat'):] == 'monty_python_data_2.dat':
     sys.stdout.write(struct.pack('B',8))
+
+if sys.argv[1][-len('caravan.dat'):] == 'caravan.dat':
+    data = [d.replace('\t',',') for d in open(sys.argv[1]).read().split("\n")[:-1]]
+    rowLength = len(data[0].split(','))
+    entr = [float(t) for t in utils.entropyCols(data)]
+    
+    nGroups = 2
+    entrGroups = [ [] for t in range(nGroups) ]
+    #entrLimits = [0.3545, 0.775691, 1.373008, 1.912124, 2.450168, 2.80088, 4.755669, 5.0]
+    #entrLimits = [0.3545, 1.912124, 2.80088, 5.0]
+    entrLimits = [0.4, 5]
+
+    for t in range(len(entr)):
+        for n in range(len(entrGroups)):
+            if entr[t] < entrLimits[n]:
+                entrGroups[n].append(t)
+                break
+    
+    codePrefix = ''
+    code = ''
+    
+    for n in range(nGroups):
+        cols_n = utils.parseString(utils.charEncodeCols(utils.chooseCols(data, entrGroups[n])))
+        codePrefix = codePrefix + str(len(cols_n)) + '_'
+        code = code + cols_n
+    
+    code = struct.pack('B',ids['caravan.dat']) + bz2.compress(codePrefix + code) #+ codePrefix + code 
+    sys.stdout.write(code)

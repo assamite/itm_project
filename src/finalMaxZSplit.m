@@ -38,9 +38,10 @@ ft = fittype( 'poly2' );
 [SY, SZ] = meshgrid(-4:0.1:4, -4:0.3:1.5);
 SX = reshape(fr(SY),size(SY));
 figure
-scatter3(Y,Z,X, 'filled', 'k');
+scatter3(Y,Z,X,5,'k','o', 'filled');
 hold on;
 surf(SY,SZ,SX);
+
 
 indeces = zeros(size(X));
 

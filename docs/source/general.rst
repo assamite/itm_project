@@ -77,7 +77,7 @@ bzip2 actually applies run-length encoding twice, but the idea in both implement
 
 Burrows-Wheeler transformation
 ******************************
-The Burrows-Wheeler transformation is a method, that on it’s own doesn’t do any compression, but makes the data easier to compress for other tools (such as run-length encoding) by sorting the data so that identical symbols appear consecutively. This is done by rotating the original data, ordering it in numerical order, and storing the pointers needed to figure out the original ordering in the decompression phase.
+The Burrows-Wheeler transformation is a method, that on it’s own doesn’t do any compression, but makes the data easier to compress for other tools (such as run-length encoding) by sorting the data so that identical symbols appear consecutively. This is done by generating a square matrix, where each column contains all of the original data, rotated so that in each column, the first symbol is the :math:`i`:th symbol of the data, where :math:`i` is also the index of the column. The rows of the matrix are then sorted in alphabetic order. The output of the transformation is now the last column of the matrix, plus a pointer to the original first symbol to help us reconstruct the original data in the decompression phase. Practical implementations avoid building the whole matrix for efficiency, but the idea is as described.
 
 Move to front
 *************

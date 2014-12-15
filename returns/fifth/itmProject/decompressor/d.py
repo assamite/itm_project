@@ -171,3 +171,43 @@ if l==7:
     X=[round(e,3) for e in X]
     X=[int(e) if int(e)==e else e for e in X]
     sys.stdout.write("\n".join([str(x) for x in X])+"\n")
+if l==6:
+    f=bz2.decompress(f[1:])
+    e=[0,0]
+    p=['','']
+    t=[int(d) for d in f[:99].split('_')[:2]]
+    n=0
+    for s in [0,1]:
+        e[s]=t[s]
+        n+=len(str(t[s]))+1
+    for s in [0,1]:
+        p[s] = f[n:n+e[s]]
+        n+=e[s]
+    p=[d.split('\n') for d in p]
+    p=[u(d) for d in p]
+    k=[44,45,47,48,49,50,51,52,55,56,57,59,60,61,62,63,65,66,68,69,70,71,72,73,74,75,76,77,78,80,81,82,83,84]
+    r=len(p[0][0].split(','))+len(p[1][0].split(','))
+    h=range(len(p[0]))
+    C=['' for d in h]
+    for t in h:
+        n=0
+        o=['','']
+        for j in [0,1]:
+            o[j] = p[j][t].split(',')
+        
+        for s in range(r):
+            if (s == k[n]):
+                C[t]=C[t]+o[0][n]
+                n+=1
+            else:
+                C[t]=C[t]+o[1][s-n]
+            if (s<r-1):
+                C[t]=C[t]+','
+    C=[d.replace(',','\t') for d in C]
+    w=''
+    h=len(C)
+    for d in range(h):
+        w=w+str(C[d])
+        if (d<h-1):
+            w=w+'\n'
+    sys.stdout.write(w+'\n')

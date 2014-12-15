@@ -1,8 +1,7 @@
 Group -- monty_python
 =====================
 
-The group for the project was Simo Linkola, Teemu Pitkänen and Kalle Timperi.
-Group members took part in the following areas during the course:
+The group for the project was Simo Linkola, Teemu Pitkänen and Kalle Timperi. We had two weekly group meetings, a few hours each. Most of the work was done in these meetings, and all group members took part in the compression of almost every file, though each of us had naturally more responsibility in some files than others. The main responsibilities of each group member are listed in the table below:
 
 	=======================	===============	===================
 	File                    Modeling		Implementation

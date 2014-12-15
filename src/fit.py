@@ -4,7 +4,7 @@ from scipy.optimize import curve_fit
 import utils
 
 # Read the original data from file
-data = open("../data/ty.txt","r").read().split("\n")
+data = open("../data/curve1.dat","r").read().split("\n")
 data.pop()
 data = [float(x) for x in data]
 
@@ -30,10 +30,10 @@ def fun(x, a, b, c, d, e, f, g, h, i, j, k,m):
 #0.270522
 #-0.698834
 #2.638657
-ran = np.linspace(0,1999,num=10000)
+ran = np.linspace(0,1999,num=2000)
 print ran[:10]
-#p = [-1.08, 1363, 1.0/60, 15, 1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2.64, 1]
-p = [-1.08589, 1365.49, 0.016679, 58.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,51.668242,5]
+p = [-1.08, 1363, 1.0/60, 15, 1.09,-28.15,1.0/30,-24.33,0.27,-0.7,2.64, 1]
+#p = [-1.08589, 1365.49, 0.016679, 58.559187,1.131426,5601.76666,0.033079,-25.24067,-0.302556,-0.706202,51.668242,5]
 #popt, popcov = curve_fit(fun, ran, data, p0 = p)
 
 # Plot data, the fitted function and the difference
@@ -54,7 +54,7 @@ residuals = np.array(data)-np.array(estimates)
 plt.plot(residuals, '.', color = 'black', ms = 2, label = 'residuals')
 #plt.plot(y, color = 'red', label = 'fitted curve');
 #plt.plot(data-y)
-plt.ylim((-300, 300))
+plt.ylim((-300, 250))
 plt.ylabel('value')
 plt.xlabel('index')
 plt.legend(loc = 0)
